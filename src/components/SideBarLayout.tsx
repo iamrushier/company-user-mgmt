@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -14,6 +14,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -41,9 +42,8 @@ interface IAppBarProps extends MuiAppBarProps {
 
 interface ISidebarLayoutPropsType {
   title: string;
-  handleShowAll: () => void;
-  handleAddNew: () => void;
-  component: JSX.Element;
+  handleShowAll?: () => void;
+  handleAddNew?: () => void;
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -77,7 +77,7 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  const navigate = useNavigate();
   return (
     <LayoutContainer>
       <CssBaseline />
@@ -121,18 +121,28 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
           <Divider />
           <List>
             <ListItem>
-              <ListItemButton onClick={props.handleShowAll}>
+              <ListItemButton
+                onClick={() => {
+                  navigate(`/${props.title.toLowerCase()}`);
+                }}
+              >
                 <ListItemText primary="Show all" />
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton onClick={props.handleAddNew}>
+              <ListItemButton
+                onClick={() => {
+                  navigate(`/${props.title.toLowerCase()}/add`);
+                }}
+              >
                 <ListItemText primary="Add new" />
               </ListItemButton>
             </ListItem>
           </List>
         </Drawer>
-        <Main open={open}>{props.component}</Main>
+        <Main open={open}>
+          <Outlet />
+        </Main>
       </Box>
     </LayoutContainer>
   );

@@ -6,7 +6,6 @@ import Title from "./Title";
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     navigate(newValue);
   };
@@ -18,7 +17,7 @@ const Header = () => {
           <Title />
           <Box sx={{ flexGrow: 1, mx: 2 }}>
             <Tabs
-              value={location.pathname}
+              value={"/" + location.pathname.split("/")[1]}
               onChange={handleChange}
               sx={{ flexGrow: 1 }}
               textColor="inherit"

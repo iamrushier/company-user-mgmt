@@ -8,6 +8,12 @@ import Roles from "./pages/Roles";
 import Blogs from "./pages/Blogs";
 import LoginPage from "./pages/LoginPage";
 import SidebarLayout from "./components/SidebarLayout";
+import UserDetails from "./components/UserDetails";
+import CompanyDetails from "./components/CompanyDetails";
+import RoleDetails from "./components/RoleDetails";
+import CompanyForm from "./components/CompanyForm";
+import UserForm from "./components/UserForm";
+import Error404 from "./components/Error404";
 
 function App() {
   return (
@@ -16,49 +22,30 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route
-            path="/users"
-            element={
-              <SidebarLayout
-                title="Users"
-                component={<Users />}
-                handleShowAll={() => {
-                  console.log("users");
-                }}
-                handleAddNew={() => {}}
-              />
-            }
-          />
+          <Route path="/users" element={<SidebarLayout title="Users" />}>
+            <Route index element={<Users />} />
+            <Route path="add" element={<UserForm />} />
+            <Route path="edit/:id" element={<UserForm />} />
+            <Route path=":id" element={<UserDetails />} />
+          </Route>
           <Route
             path="/companies"
-            element={
-              <SidebarLayout
-                title="Companies"
-                component={<Companies />}
-                handleShowAll={() => {
-                  console.log("companies");
-                }}
-                handleAddNew={() => {}}
-              />
-            }
-          />
-          <Route
-            path="/roles"
-            element={
-              <SidebarLayout
-                title="Roles"
-                component={<Roles />}
-                handleShowAll={() => {
-                  console.log("roles");
-                }}
-                handleAddNew={() => {}}
-              />
-            }
-          />
-          {/* <Route path="/companies" element={<Companies />} />
-          <Route path="/roles" element={<Roles />} /> */}
+            element={<SidebarLayout title="Companies" />}
+          >
+            <Route index element={<Companies />} />
+            <Route path="add" element={<CompanyForm />} />
+            <Route path="edit/:id" element={<CompanyForm />} />
+            <Route path=":id" element={<CompanyDetails />} />
+          </Route>
+
+          <Route path="/roles" element={<SidebarLayout title="Roles" />}>
+            <Route index element={<Roles />} />
+            <Route path=":id" element={<RoleDetails />} />
+          </Route>
+
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/profile" element={<LoginPage />} />
+          <Route path="*" element={<Error404 />} />
         </Routes>
       </BrowserRouter>
     </>
