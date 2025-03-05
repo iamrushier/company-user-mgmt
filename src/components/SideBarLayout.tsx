@@ -40,7 +40,7 @@ interface IAppBarProps extends MuiAppBarProps {
 }
 
 interface ISidebarLayoutPropsType {
-  title: "string";
+  title: string;
   handleShowAll: () => void;
   handleAddNew: () => void;
   component: JSX.Element;
@@ -50,6 +50,8 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<IAppBarProps>(({ theme, open }) => ({
   width: `calc(100% - ${open ? drawerWidth : 0}px)`,
+  backgroundColor: "white",
+  color: "black",
   marginLeft: "auto",
   transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.easeOut,
@@ -65,7 +67,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function UsersPage(props: ISidebarLayoutPropsType) {
+export default function SidebarLayout(props: ISidebarLayoutPropsType) {
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {

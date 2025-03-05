@@ -7,6 +7,7 @@ import Companies from "./pages/Companies";
 import Roles from "./pages/Roles";
 import Blogs from "./pages/Blogs";
 import LoginPage from "./pages/LoginPage";
+import SidebarLayout from "./components/SidebarLayout";
 
 function App() {
   return (
@@ -15,9 +16,47 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/companies" element={<Companies />} />
-          <Route path="/roles" element={<Roles />} />
+          <Route
+            path="/users"
+            element={
+              <SidebarLayout
+                title="Users"
+                component={<Users />}
+                handleShowAll={() => {
+                  console.log("users");
+                }}
+                handleAddNew={() => {}}
+              />
+            }
+          />
+          <Route
+            path="/companies"
+            element={
+              <SidebarLayout
+                title="Companies"
+                component={<Companies />}
+                handleShowAll={() => {
+                  console.log("companies");
+                }}
+                handleAddNew={() => {}}
+              />
+            }
+          />
+          <Route
+            path="/roles"
+            element={
+              <SidebarLayout
+                title="Roles"
+                component={<Roles />}
+                handleShowAll={() => {
+                  console.log("roles");
+                }}
+                handleAddNew={() => {}}
+              />
+            }
+          />
+          {/* <Route path="/companies" element={<Companies />} />
+          <Route path="/roles" element={<Roles />} /> */}
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/profile" element={<LoginPage />} />
         </Routes>
