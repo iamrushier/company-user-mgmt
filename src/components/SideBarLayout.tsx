@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -17,7 +17,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 const drawerWidth = 240;
 
-const UsersContainer = styled("div")({
+const LayoutContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
   height: "calc(100vh - 64px)",
@@ -35,13 +35,20 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   }),
 }));
 
-interface AppBarProps extends MuiAppBarProps {
+interface IAppBarProps extends MuiAppBarProps {
   open?: boolean;
+}
+
+interface ISidebarLayoutPropsType {
+  title: "string";
+  handleShowAll: () => void;
+  handleAddNew: () => void;
+  component: JSX.Element;
 }
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<IAppBarProps>(({ theme, open }) => ({
   width: `calc(100% - ${open ? drawerWidth : 0}px)`,
   marginLeft: "auto",
   transition: theme.transitions.create(["margin", "width"], {
@@ -58,7 +65,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function UsersPage() {
+export default function UsersPage(props: ISidebarLayoutPropsType) {
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
@@ -70,7 +77,7 @@ export default function UsersPage() {
   };
 
   return (
-    <UsersContainer>
+    <LayoutContainer>
       <CssBaseline />
       <AppBar position="relative" open={open}>
         <Toolbar>
@@ -84,7 +91,7 @@ export default function UsersPage() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Users
+            {`${props.title}`}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -112,19 +119,19 @@ export default function UsersPage() {
           <Divider />
           <List>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton onClick={props.handleShowAll}>
                 <ListItemText primary="Show all" />
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton>
+              <ListItemButton onClick={props.handleAddNew}>
                 <ListItemText primary="Add new" />
               </ListItemButton>
             </ListItem>
           </List>
         </Drawer>
-        <Main open={open}>User details</Main>
+        <Main open={open}>{props.component}</Main>
       </Box>
-    </UsersContainer>
+    </LayoutContainer>
   );
 }
