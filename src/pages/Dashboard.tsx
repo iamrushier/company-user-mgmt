@@ -1,31 +1,94 @@
 import { Grid2 as Grid, Card, CardContent, Typography } from "@mui/material";
 import { People, Business, Work, Article } from "@mui/icons-material";
 import Header from "../components/Header";
-
-const stats = [
+import { useUsersData } from "../../store/context/UsersDataContext";
+import { useEffect, useState } from "react";
+import {
+  getAllBlogs,
+  getAllCompanies,
+  getAllRoles,
+  getAllUsers,
+} from "../../api/api_calls";
+import { useQuery } from "@tanstack/react-query";
+import { useCompaniesData } from "../../store/context/CompaniesDataContext";
+import { useRolesData } from "../../store/context/RolesDataContext";
+import { useBlogsData } from "../../store/context/BlogsDataContext";
+const initialStats = [
   {
     label: "Users",
-    value: "00",
+    value: "0",
     icon: <People fontSize="large" color="primary" />,
   },
   {
     label: "Companies",
-    value: "00",
+    value: "0",
     icon: <Business fontSize="large" color="secondary" />,
   },
   {
     label: "Roles",
-    value: "00",
+    value: "0",
     icon: <Work fontSize="large" color="success" />,
   },
   {
     label: "Blogs",
-    value: "00",
+    value: "0",
     icon: <Article fontSize="large" color="warning" />,
   },
 ];
-
 const Dashboard = () => {
+  const { data: userData, dispatch: dispatchUserData } = useUsersData();
+  const { data: companyData, dispatch: dispatchCompanyData } =
+    useCompaniesData();
+  const { data: roleData, dispatch: dispatchRoleData } = useRolesData();
+  const { data: blogData, dispatch: dispatchBlogData } = useBlogsData();
+
+  const [stats, setStats] = useState(initialStats);
+
+  const fetchData = async () => {
+    try {
+      const userData = (await getAllUsers()) || [];
+      const companyData = (await getAllCompanies()) || [];
+      const roleData = (await getAllRoles()) || [];
+      const blogData = (await getAllBlogs()) || [];
+
+      dispatchUserData({ type: "SET_USERS", payload: userData });
+      dispatchCompanyData({ type: "SET_COMPANIES", payload: companyData });
+      dispatchRoleData({ type: "SET_ROLES", payload: roleData });
+      dispatchBlogData({ type: "SET_BLOGS", payload: blogData });
+
+      return [userData, companyData, roleData, blogData];
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useQuery({
+    queryKey: ["data"],
+    queryFn: fetchData,
+    refetchOnMount: false,
+  });
+  useEffect(() => {
+    setStats((prevStats) => {
+      return [
+        {
+          ...prevStats[0],
+          value: userData.length.toString(),
+        },
+        {
+          ...prevStats[1],
+          value: companyData.length.toString(),
+        },
+        {
+          ...prevStats[2],
+          value: roleData.length.toString(),
+        },
+        {
+          ...prevStats[3],
+          value: blogData.length.toString(),
+        },
+      ];
+    });
+  }, [userData, companyData, roleData, blogData]);
+
   return (
     <>
       <Header />
