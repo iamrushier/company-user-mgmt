@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 const Users = () => {
   const [id, setId] = useState(0);
   const navigate = useNavigate();

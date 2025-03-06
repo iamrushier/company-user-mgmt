@@ -1,6 +1,5 @@
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Companies from "./pages/Companies";
@@ -19,9 +18,10 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header />
+        {/* <Header /> */}
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/users" element={<SidebarLayout title="Users" />}>
             <Route index element={<Users />} />
             <Route path="add" element={<UserForm />} />

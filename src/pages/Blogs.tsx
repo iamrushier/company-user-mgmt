@@ -1,5 +1,12 @@
+import Header from "../components/Header";
+
 const Blogs = () => {
-  return <div>Blogs</div>;
+  return (
+    <div>
+      <Header />
+      Blogs
+    </div>
+  );
 };
 
 export default Blogs;

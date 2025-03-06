@@ -15,6 +15,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { Outlet, useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 const drawerWidth = 240;
 
@@ -79,71 +80,74 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
   };
   const navigate = useNavigate();
   return (
-    <LayoutContainer>
-      <CssBaseline />
-      <AppBar position="relative" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            {`${props.title}`}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box sx={{ display: "flex", flexGrow: 1 }}>
-        <Drawer
-          sx={{
-            width: open ? `${drawerWidth}px` : 0,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: open ? `${drawerWidth}px` : 0,
-              boxSizing: "border-box",
-              top: "64px", // Prevents overlapping the app header
-              height: "calc(100vh - 64px)",
-            },
-          }}
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeftIcon />
+    <>
+      <Header />
+      <LayoutContainer>
+        <CssBaseline />
+        <AppBar position="relative" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
+            >
+              <MenuIcon />
             </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List>
-            <ListItem>
-              <ListItemButton
-                onClick={() => {
-                  navigate(`/${props.title.toLowerCase()}`);
-                }}
-              >
-                <ListItemText primary="Show all" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem>
-              <ListItemButton
-                onClick={() => {
-                  navigate(`/${props.title.toLowerCase()}/add`);
-                }}
-              >
-                <ListItemText primary="Add new" />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Drawer>
-        <Main open={open}>
-          <Outlet />
-        </Main>
-      </Box>
-    </LayoutContainer>
+            <Typography variant="h6" noWrap>
+              {`${props.title}`}
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Box sx={{ display: "flex", flexGrow: 1 }}>
+          <Drawer
+            sx={{
+              width: open ? `${drawerWidth}px` : 0,
+              flexShrink: 0,
+              "& .MuiDrawer-paper": {
+                width: open ? `${drawerWidth}px` : 0,
+                boxSizing: "border-box",
+                top: "64px", // Prevents overlapping the app header
+                height: "calc(100vh - 64px)",
+              },
+            }}
+            variant="persistent"
+            anchor="left"
+            open={open}
+          >
+            <DrawerHeader>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+              <ListItem>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(`/${props.title.toLowerCase()}`);
+                  }}
+                >
+                  <ListItemText primary="Show all" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(`/${props.title.toLowerCase()}/add`);
+                  }}
+                >
+                  <ListItemText primary="Add new" />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Drawer>
+          <Main open={open}>
+            <Outlet />
+          </Main>
+        </Box>
+      </LayoutContainer>
+    </>
   );
 }
