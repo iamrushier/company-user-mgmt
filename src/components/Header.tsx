@@ -14,9 +14,12 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import Title from "./Title";
-import { Login } from "@mui/icons-material";
+import { Login, Logout } from "@mui/icons-material";
+import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
 
 const Header = () => {
+  const { isLoggedIn, user, updateLoginStatus, updateCredentials, updateUser } =
+    useAuthUserStore();
   const location = useLocation();
   const navigate = useNavigate();
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -33,6 +36,12 @@ const Header = () => {
   };
   const handleLogin = () => {
     navigate("/login");
+  };
+  const handleLogout = () => {
+    updateLoginStatus(false);
+    updateCredentials({ username: "", password: "" });
+    updateUser({});
+    navigate("/");
   };
 
   return (
@@ -71,7 +80,7 @@ const Header = () => {
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={handleClose}
+        // onClick={handleClose}
         slotProps={{
           paper: {
             elevation: 0,
@@ -104,14 +113,18 @@ const Header = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+          <Avatar /> {isLoggedIn ? user?.name : "My Account"}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleLogin}>
+        <MenuItem onClick={isLoggedIn ? handleLogout : handleLogin}>
           <ListItemIcon>
-            <Login fontSize="small" />
+            {isLoggedIn ? (
+              <Logout fontSize="small" />
+            ) : (
+              <Login fontSize="small" />
+            )}
           </ListItemIcon>
-          Login
+          {isLoggedIn ? "Logout" : "Login"}
         </MenuItem>
       </Menu>
     </>

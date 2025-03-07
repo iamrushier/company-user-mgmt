@@ -4,6 +4,7 @@ import {
   IAuthResponseSuccess,
   IBlog,
   ICompany,
+  ICredentials,
   IRole,
   IUser,
 } from "../types";
@@ -13,13 +14,9 @@ const companyAPI = axios.create({
 });
 
 export const tryLoginForUser = async (
-  username: string,
-  password: string
+  credentials: ICredentials
 ): Promise<IAuthResponseSuccess | IAuthResponseFailure> => {
-  const response = await companyAPI.post("/login", {
-    username,
-    password,
-  });
+  const response = await companyAPI.post("/login", credentials); // Useless API, returns failre only if password=="failed-password"
   return response.data;
 };
 

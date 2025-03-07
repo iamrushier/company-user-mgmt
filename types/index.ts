@@ -11,7 +11,10 @@ export interface IAuthResponseFailure extends IAuthStatus {
     message: string;
   };
 }
-
+export interface ICredentials {
+  username: string;
+  password: string;
+}
 export interface IUser {
   id: number;
   name: string;
