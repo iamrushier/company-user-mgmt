@@ -1,19 +1,36 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Container, List } from "@mui/material";
+import { useCompaniesData } from "../../store/context/CompaniesDataContext";
+import CompanyCard from "../components/CompanyCard";
+import { useQuery } from "@tanstack/react-query";
+import { getAllCompanies } from "../../api/api_calls";
+
 const Companies = () => {
-  const [id, setId] = useState(0);
-  const navigate = useNavigate();
+  const { data: companyData, dispatch } = useCompaniesData();
+  const fetchCompanyData = async () => {
+    if (companyData.length > 0) return companyData;
+    try {
+      const companyData = await getAllCompanies();
+      dispatch({ type: "SET_COMPANIES", payload: companyData });
+      return companyData;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+  useQuery({
+    queryKey: ["companies"],
+    queryFn: fetchCompanyData,
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 5,
+  });
   return (
-    <>
-      Comapnies
-      <input
-        type="number"
-        value={id}
-        onChange={(e) => setId(Number(e.target.value))}
-      />
-      <button onClick={() => navigate(`/companies/${id}`)}>Details</button>
-      <button onClick={() => navigate(`/companies/edit/${id}`)}>Edit</button>
-    </>
+    <Container>
+      <List>
+        {companyData.map((company) => (
+          <CompanyCard key={company.id} company={company} />
+        ))}
+      </List>
+    </Container>
   );
 };
 

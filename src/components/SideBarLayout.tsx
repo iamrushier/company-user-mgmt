@@ -143,7 +143,7 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
               </ListItem>
             </List>
           </Drawer>
-          <Main open={open}>
+          <Main open={open} sx={{ mt: 3, height: "80vh", overflowY: "auto" }}>
             <Outlet />
           </Main>
         </Box>
