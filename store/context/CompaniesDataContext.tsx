@@ -4,20 +4,21 @@ import { ICompany } from "../../types";
 
 type CompanyDataContextType = {
   data: ICompany[];
-  dispatch: React.Dispatch<{ type: string; payload?: ICompany[] }>;
+  dispatch: React.Dispatch<{ type: string; payload?: ICompany[]; id?: number }>;
 };
 
 const reducer = (
   state: ICompany[],
-  action: { type: string; payload?: ICompany[] }
+  action: { type: string; payload?: ICompany[]; id?: number }
 ) => {
   switch (action.type) {
     case "SET_COMPANIES":
       if (action.payload) return action.payload;
       else return state;
-    default:
-      return state;
+    case "DELETE_COMPANY":
+      if (action.id) return state.filter((user) => user.id !== action.id);
   }
+  return state;
 };
 
 const CompaniesDataContext = createContext<CompanyDataContextType | undefined>(

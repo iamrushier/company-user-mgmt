@@ -4,16 +4,19 @@ import { IBlog } from "../../types";
 
 type BlogsDataContextType = {
   data: IBlog[];
-  dispatch: React.Dispatch<{ type: string; payload?: IBlog[] }>;
+  dispatch: React.Dispatch<{ type: string; payload?: IBlog[]; id?: number }>;
 };
 
 const reducer = (
   state: IBlog[],
-  action: { type: string; payload?: IBlog[] }
+  action: { type: string; payload?: IBlog[]; id?: number }
 ) => {
   switch (action.type) {
     case "SET_BLOGS":
       return action.payload ? action.payload : state;
+    case "DELETE_BLOG":
+      if (!action.id) return state;
+      return state.filter((blog) => blog.id !== action.id);
     default:
       return state;
   }

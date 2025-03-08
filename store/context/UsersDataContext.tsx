@@ -4,20 +4,21 @@ import { IUser } from "../../types";
 
 type UserDataContextType = {
   data: IUser[];
-  dispatch: React.Dispatch<{ type: string; payload?: IUser[] }>;
+  dispatch: React.Dispatch<{ type: string; payload?: IUser[]; id?: number }>;
 };
 
 const reducer = (
   state: IUser[],
-  action: { type: string; payload?: IUser[] }
+  action: { type: string; payload?: IUser[]; id?: number }
 ) => {
   switch (action.type) {
     case "SET_USERS":
       if (action.payload) return action.payload;
       else return state;
-    default:
-      return state;
+    case "DELETE_USER":
+      if (action.id) return state.filter((user) => user.id !== action.id);
   }
+  return state;
 };
 
 const UsersDataContext = createContext<UserDataContextType | undefined>(

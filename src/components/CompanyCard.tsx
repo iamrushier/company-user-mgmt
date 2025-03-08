@@ -20,29 +20,33 @@ const CompanyCard = ({ company }: { company: ICompany }) => {
         <ListItem>
           <ListItemAvatar>
             <Avatar
-              sx={{
-                bgcolor: "primary.main",
-                width: 56,
-                height: 56,
-                marginRight: 2,
-              }}
+              sx={{ bgcolor: "primary.main", width: 56, height: 56, mr: 2 }}
             >
               <Business fontSize="large" sx={{ color: "white" }} />
             </Avatar>
           </ListItemAvatar>
           <ListItemText
             primary={
-              <Typography variant="h6" fontWeight="bold">
+              <Typography variant="h6" fontWeight="bold" component="span">
                 {company.name}
               </Typography>
             }
             secondary={
               <>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  component="span"
+                >
                   Industry: {company.industry} | Employees:{" "}
                   {company.employeeCount}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <br />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  component="span"
+                >
                   CEO: {company.ceoName} | Market Cap: $
                   {company.marketCap.toLocaleString()}
                 </Typography>

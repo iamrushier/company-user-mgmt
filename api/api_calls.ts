@@ -3,6 +3,7 @@ import {
   IAuthResponseFailure,
   IAuthResponseSuccess,
   IBlog,
+  IComment,
   ICompany,
   ICredentials,
   IRole,
@@ -40,7 +41,7 @@ export const getAllBlogs = async (): Promise<IBlog[]> => {
   return response.data;
 };
 
-export const getAllComments = async (): Promise<IBlog[]> => {
+export const getAllComments = async (): Promise<IComment[]> => {
   const response = await companyAPI.get("/comments");
   return response.data;
 };

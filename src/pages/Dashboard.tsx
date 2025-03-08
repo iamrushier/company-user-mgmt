@@ -5,6 +5,7 @@ import { useUsersData } from "../../store/context/UsersDataContext";
 import { useEffect, useState } from "react";
 import {
   getAllBlogs,
+  getAllComments,
   getAllCompanies,
   getAllRoles,
   getAllUsers,
@@ -13,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCompaniesData } from "../../store/context/CompaniesDataContext";
 import { useRolesData } from "../../store/context/RolesDataContext";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
+import { useCommentsData } from "../../store/context/CommentsDataContext";
 const initialStats = [
   {
     label: "Users",
@@ -41,6 +43,7 @@ const Dashboard = () => {
     useCompaniesData();
   const { data: roleData, dispatch: dispatchRoleData } = useRolesData();
   const { data: blogData, dispatch: dispatchBlogData } = useBlogsData();
+  const { dispatch: dispatchCommentData } = useCommentsData();
 
   const [stats, setStats] = useState(initialStats);
 
@@ -50,11 +53,13 @@ const Dashboard = () => {
       const companyData = (await getAllCompanies()) || [];
       const roleData = (await getAllRoles()) || [];
       const blogData = (await getAllBlogs()) || [];
+      const commentData = (await getAllComments()) || [];
 
       dispatchUserData({ type: "SET_USERS", payload: userData });
       dispatchCompanyData({ type: "SET_COMPANIES", payload: companyData });
       dispatchRoleData({ type: "SET_ROLES", payload: roleData });
       dispatchBlogData({ type: "SET_BLOGS", payload: blogData });
+      dispatchCommentData({ type: "SET_COMMENTS", payload: commentData });
 
       return [userData, companyData, roleData, blogData];
     } catch (error) {
