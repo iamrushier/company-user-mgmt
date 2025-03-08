@@ -30,6 +30,7 @@ import { useCommentsData } from "../../store/context/CommentsDataContext";
 import { useState } from "react";
 import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
 import CommentCard from "./CommentCard";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 
 const BlogDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,6 +46,7 @@ const BlogDetails = () => {
   const [commentError, setCommentError] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  const { roles } = useRoleStore();
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -93,16 +95,31 @@ const BlogDetails = () => {
     setNewComment("");
   };
   const handleDeleteBlog = () => {
-    setSnackbar({
-      open: true,
-      message: "Blog is being deleted",
-      severity: "error",
-    });
-    setTimeout(() => {
-      blogDispatch({ type: "DELETE_BLOG", id: blog.id });
-      setDeleteDialogOpen(false);
-      navigate("/blogs");
-    }, 2000);
+    const userRole =
+      user && typeof user === "object" && "role" in user ? user.role : null;
+
+    if (userRole && roles[userRole]?.blogs?.read_write) {
+      setSnackbar({
+        open: true,
+        message: "Blog is being deleted",
+        severity: "error",
+      });
+      setTimeout(() => {
+        blogDispatch({ type: "DELETE_BLOG", id: blog.id });
+        setDeleteDialogOpen(false);
+        navigate("/blogs");
+      }, 2000);
+    } else {
+      setSnackbar({
+        open: true,
+        message: "You are not authorized to perform this action!",
+        severity: "error",
+      });
+      setTimeout(() => {
+        setDeleteDialogOpen(false);
+        return;
+      }, 1000);
+    }
   };
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", mt: 3, px: 2 }}>

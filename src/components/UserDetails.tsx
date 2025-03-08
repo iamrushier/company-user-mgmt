@@ -78,7 +78,12 @@ const UserDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    if (loggedInUser && roles[loggedInUser?.role!]["users"].read_write) {
+    const userRole =
+      loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
+        ? loggedInUser.role
+        : null;
+
+    if (userRole && roles[userRole]?.users?.read_write) {
       setSnackbar({
         open: true,
         message: "User is being deleted!",

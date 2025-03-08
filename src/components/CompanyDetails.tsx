@@ -33,6 +33,8 @@ import {
   AccountCircle,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 
 const CompanyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +42,8 @@ const CompanyDetails = () => {
   const navigate = useNavigate();
   const company = companies.find((c) => c.id === Number(id));
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { user: loggedInUser } = useAuthUserStore();
+  const { roles } = useRoleStore();
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -70,16 +74,33 @@ const CompanyDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    setSnackbar({
-      open: true,
-      message: "Comapny is being deleted!",
-      severity: "error",
-    });
-    setTimeout(() => {
-      dispatch({ type: "DELETE_COMPANY", id: company.id });
-      setDeleteDialogOpen(false);
-      navigate("/companies");
-    }, 2000);
+    const userRole =
+      loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
+        ? loggedInUser.role
+        : null;
+
+    if (userRole && roles[userRole]?.companies?.read_write) {
+      setSnackbar({
+        open: true,
+        message: "Comapny is being deleted!",
+        severity: "error",
+      });
+      setTimeout(() => {
+        dispatch({ type: "DELETE_COMPANY", id: company.id });
+        setDeleteDialogOpen(false);
+        navigate("/companies");
+      }, 2000);
+    } else {
+      setSnackbar({
+        open: true,
+        message: "You are not authorized to perform this action!",
+        severity: "error",
+      });
+      setTimeout(() => {
+        setDeleteDialogOpen(false);
+        return;
+      }, 1000);
+    }
   };
 
   return (
