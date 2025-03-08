@@ -39,3 +39,8 @@ export const getAllBlogs = async (): Promise<IBlog[]> => {
   const response = await companyAPI.get("/posts");
   return response.data;
 };
+
+export const getAllComments = async (): Promise<IBlog[]> => {
+  const response = await companyAPI.get("/comments");
+  return response.data;
+};
