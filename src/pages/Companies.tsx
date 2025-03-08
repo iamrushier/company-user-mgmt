@@ -25,7 +25,7 @@ const companiesReducer = (
   action: {
     type: string;
     payload: ICompany[];
-    marketCap?: { min: number; max: number | undefined };
+    marketCap?: { min: string; max: string };
     sortCondition?: SORT_BY;
   }
 ) => {
@@ -34,15 +34,15 @@ const companiesReducer = (
       return action.payload;
     case "FILTER":
       if (action.marketCap === undefined) return action.payload;
-      if (action.marketCap.max === undefined)
+      if (!action.marketCap.max)
         return action.payload.filter(
-          (company) => company.marketCap >= action.marketCap?.min!
+          (company) => company.marketCap >= Number(action.marketCap?.min!)
         );
 
       return action.payload.filter(
         (company) =>
-          company.marketCap >= action.marketCap?.min! &&
-          company.marketCap <= action.marketCap?.max!
+          company.marketCap >= Number(action.marketCap?.min!) &&
+          company.marketCap <= Number(action.marketCap?.max!)
       );
     case "CLEAR_FILTER":
       return action.payload;
@@ -67,8 +67,8 @@ const Companies = () => {
     companyData
   );
   const [marketCapFilter, setMarketCapFilter] = useState({
-    min: 0,
-    max: Infinity,
+    min: "0",
+    max: "",
   });
   const [sortOption, setSortOption] = useState<SORT_BY | "">("");
 
@@ -101,7 +101,7 @@ const Companies = () => {
   };
 
   const clearFilter = () => {
-    setMarketCapFilter({ min: 0, max: Infinity });
+    setMarketCapFilter({ min: "0", max: "" });
     setSortOption("");
     dispatchLocalData({ type: "CLEAR_FILTER", payload: companyData });
   };
@@ -139,7 +139,7 @@ const Companies = () => {
             onChange={(e) =>
               setMarketCapFilter({
                 ...marketCapFilter,
-                min: Math.max(0, Number(e.target.value)),
+                min: "" + Math.max(0, Number(e.target.value)),
               })
             }
             size="small"
@@ -149,11 +149,11 @@ const Companies = () => {
           <TextField
             type="number"
             label="Max Market Cap"
-            value={marketCapFilter.max}
+            value={marketCapFilter.max === "" ? "" : marketCapFilter.max}
             onChange={(e) =>
               setMarketCapFilter({
                 ...marketCapFilter,
-                max: Number(e.target.value),
+                max: e.target.value,
               })
             }
             size="small"
