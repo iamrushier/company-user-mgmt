@@ -158,6 +158,7 @@ const LoginPage = () => {
               {message}
             </Typography>
           )}
+          Dummy Creds: emily_johnson , success-password
         </Card>
       </Box>
     </>
