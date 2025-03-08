@@ -17,6 +17,7 @@ type AuthUserStore = {
 
 export const useAuthUserStore = create<AuthUserStore>((set) => ({
   isLoggedIn: false,
+  user: undefined,
   updateLoginStatus: (status) => set({ isLoggedIn: status }),
   updateCredentials: (credentials) => set({ credentials }),
   updateUser: (user) => set({ user }),

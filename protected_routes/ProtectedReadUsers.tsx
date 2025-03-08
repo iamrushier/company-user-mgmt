@@ -4,9 +4,12 @@ import useRoleStore from "../store/zustand/RolesActionsStore";
 const ProtectedReadUsers = () => {
   const { user } = useAuthUserStore();
   const { roles } = useRoleStore();
+  console.log(typeof user);
+  const userRole =
+    user && typeof user === "object" && "role" in user ? user.role : null;
   return (
     <>
-      {user && roles[user?.role!]["users"].read ? (
+      {userRole && roles[userRole]?.users?.read ? (
         <Outlet />
       ) : (
         <Navigate to="/not-authorized" />

@@ -4,9 +4,11 @@ import useRoleStore from "../store/zustand/RolesActionsStore";
 const ProtectedWriteUsers = () => {
   const { user } = useAuthUserStore();
   const { roles } = useRoleStore();
+  const userRole =
+    user && typeof user === "object" && "role" in user ? user.role : null;
   return (
     <>
-      {user && roles[user?.role!]["users"].read_write ? (
+      {userRole && roles[userRole]?.users?.read_write ? (
         <Outlet />
       ) : (
         <Navigate to="/not-authorized" />

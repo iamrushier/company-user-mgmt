@@ -37,11 +37,13 @@ const Header = () => {
   const handleLogin = () => {
     navigate("/login");
   };
-  const handleLogout = () => {
-    updateLoginStatus(false);
-    updateCredentials({ username: "", password: "" });
-    updateUser({});
+  const handleLogout = async () => {
     navigate("/");
+    setTimeout(() => {
+      updateLoginStatus(false);
+      updateCredentials({ username: "", password: "" });
+      updateUser({});
+    }, 500);
   };
 
   return (

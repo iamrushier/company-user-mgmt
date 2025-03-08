@@ -1,13 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthUserStore } from "../store/zustand/AuthUserStore";
 import useRoleStore from "../store/zustand/RolesActionsStore";
-import React from "react";
 const ProtectedReadBlogs = () => {
   const { user } = useAuthUserStore();
   const { roles } = useRoleStore();
+  const userRole =
+    user && typeof user === "object" && "role" in user ? user.role : null;
   return (
     <>
-      {user && roles[user?.role!]["blogs"].read ? (
+      {userRole && roles[userRole]?.blogs?.read ? (
         <Outlet />
       ) : (
         <Navigate to="/not-authorized" />
