@@ -1,11 +1,26 @@
 import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Container,
   Card,
   CardContent,
   Typography,
   List,
   ListItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+  Paper,
+  TextField,
+  Button,
+  Stack,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   AdminPanelSettings,
   SupervisorAccount,
@@ -14,10 +29,8 @@ import {
   SupportAgent,
   WorkOutline,
 } from "@mui/icons-material";
-import { useRolesData } from "../../store/context/RolesDataContext";
-import { useQuery } from "@tanstack/react-query";
-import { getAllRoles } from "../../api/api_calls";
-import { JSX } from "react";
+import { JSX, useState } from "react";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 
 const roleIcons: { [key: string]: JSX.Element } = {
   Admin: <AdminPanelSettings fontSize="large" color="primary" />,
@@ -27,49 +40,149 @@ const roleIcons: { [key: string]: JSX.Element } = {
   Support: <SupportAgent fontSize="large" color="error" />,
 };
 
-const Roles = () => {
-  const { data: rolesData, dispatch } = useRolesData();
+const permissionsList = ["users", "companies", "roles", "blogs"] as const;
 
-  const fetchRoles = async () => {
-    if (rolesData.length > 0) return rolesData;
-    try {
-      const roles = await getAllRoles();
-      dispatch({ type: "SET_ROLES", payload: roles });
-      return roles;
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-      return [];
-    }
+const Roles = () => {
+  const { roles, updateRole, addRole } = useRoleStore();
+  const [newRoleName, setNewRoleName] = useState("");
+
+  const handlePermissionChange = (
+    roleName: string,
+    category: (typeof permissionsList)[number],
+    permissionType: "read" | "read_write"
+  ) => {
+    updateRole(roleName, {
+      ...roles[roleName],
+      [category]: {
+        ...roles[roleName][category],
+        [permissionType]: !roles[roleName][category][permissionType],
+      },
+    });
   };
 
-  useQuery({
-    queryKey: ["roles"],
-    queryFn: fetchRoles,
-    refetchOnMount: false,
-    staleTime: 1000 * 60 * 10,
-  });
+  const handleAddRole = () => {
+    if (!newRoleName.trim() || roles[newRoleName]) return;
+    const defaultPermissions = {
+      users: { read: false, read_write: false },
+      companies: { read: false, read_write: false },
+      roles: { read: false, read_write: false },
+      blogs: { read: false, read_write: false },
+    };
+    addRole(newRoleName, defaultPermissions);
+    setNewRoleName("");
+  };
 
   return (
-    <Container sx={{ mt: 3, maxWidth: "450px", justifyItems: "center" }}>
+    <Container sx={{ mt: 3, maxWidth: "600px" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          mb: 3,
+          justifyContent: "center",
+          width: "80%",
+          mx: "auto",
+        }}
+      >
+        <TextField
+          label="New Role Name"
+          variant="outlined"
+          size="small"
+          sx={{ flex: 1 }}
+          value={newRoleName}
+          onChange={(e) => setNewRoleName(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={handleAddRole}>
+          Add Role
+        </Button>
+      </Stack>
+
       <List>
-        {rolesData.map((role) => (
-          <ListItem key={role.id}>
-            <Card sx={{ width: "450px", borderRadius: 2, boxShadow: 3 }}>
-              <CardContent
-                sx={{ display: "flex", alignItems: "center", gap: 2 }}
-              >
-                {roleIcons[role.name] || (
-                  <WorkOutline fontSize="large" color="disabled" />
-                )}
-                <div>
-                  <Typography variant="h6" fontWeight="bold">
-                    {role.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {role.description}
-                  </Typography>
-                </div>
-              </CardContent>
+        {Object.keys(roles).map((roleName) => (
+          <ListItem key={roleName}>
+            <Card sx={{ width: "100%", borderRadius: 2, boxShadow: 3 }}>
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <CardContent
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    {roleIcons[roleName] || (
+                      <WorkOutline fontSize="large" color="disabled" />
+                    )}
+                    <Typography variant="h6" fontWeight="bold">
+                      {roleName}
+                    </Typography>
+                  </CardContent>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="left">
+                            <strong>Permissions</strong>
+                          </TableCell>
+                          {permissionsList.map((perm) => (
+                            <TableCell key={perm} align="center">
+                              {perm.charAt(0).toUpperCase() + perm.slice(1)}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            <strong>Read</strong>
+                          </TableCell>
+                          {permissionsList.map((category) => (
+                            <TableCell key={category} align="center">
+                              <Checkbox
+                                checked={roles[roleName][category].read}
+                                {...(category === "roles" ||
+                                roleName === "Admin"
+                                  ? { disabled: true }
+                                  : {})}
+                                onChange={() =>
+                                  handlePermissionChange(
+                                    roleName,
+                                    category,
+                                    "read"
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+
+                        <TableRow>
+                          <TableCell>
+                            <strong>Read & Write</strong>
+                          </TableCell>
+                          {permissionsList.map((category) => (
+                            <TableCell key={category} align="center">
+                              <Checkbox
+                                checked={roles[roleName][category].read_write}
+                                {...(roleName === "Admin"
+                                  ? { disabled: true }
+                                  : {})}
+                                onChange={() =>
+                                  handlePermissionChange(
+                                    roleName,
+                                    category,
+                                    "read_write"
+                                  )
+                                }
+                              />
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </AccordionDetails>
+              </Accordion>
             </Card>
           </ListItem>
         ))}
