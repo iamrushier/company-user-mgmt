@@ -17,8 +17,12 @@ const companyAPI = axios.create({
 export const tryLoginForUser = async (
   credentials: ICredentials
 ): Promise<IAuthResponseSuccess | IAuthResponseFailure> => {
-  const response = await companyAPI.post("/login", credentials); // Useless API, returns failre only if password=="failed-password"
-  return response.data;
+  try {
+    const response = await companyAPI.post("/login", credentials); // Useless API, returns failre only if password=="failed-password"
+    return response.data;
+  } catch (e: any) {
+    throw e;
+  }
 };
 
 export const getAllUsers = async (): Promise<IUser[]> => {

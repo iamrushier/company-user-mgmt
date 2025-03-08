@@ -8,52 +8,67 @@ import {
   Typography,
 } from "@mui/material";
 import Title from "../components/Title";
-import { useState } from "react";
 import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
 import { useMutation } from "@tanstack/react-query";
 import { getAllUsers, tryLoginForUser } from "../../api/api_calls";
-import { ICredentials, IUser } from "../../types";
+import { ICredentials } from "../../types";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+
+const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
   const { updateLoginStatus, updateCredentials, updateUser } =
     useAuthUserStore();
-  const [user, setUser] = useState<Partial<IUser>>({});
+  const [message, setMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
   const mutation = useMutation({
     mutationFn: async (credentials: ICredentials) => {
       const response = await tryLoginForUser(credentials);
       return response;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       updateLoginStatus(data.success);
-      updateCredentials(credentials);
-      updateUser(user);
-      navigate("/");
+      updateCredentials(variables);
+      setMessage("Login successful! Redirecting...");
+      setTimeout(() => navigate("/"), 1000);
+      /* navigate("/");*/
     },
-    onError: (error) => {
-      console.log("Error:", error.message);
+    onError: (error: any) => {
+      if (error?.status === 401) {
+        setMessage("Invalid credentials. Please try again.");
+      } else {
+        setMessage("An error occurred. Please try again later.");
+      }
     },
   });
-  const handleLogin = async () => {
-    if (!credentials.username || !credentials.password) {
-      alert("Please enter username and password!");
-      return;
-    }
+
+  const onSubmit = async (data: LoginFormData) => {
     // Manual authorization
     const users = await getAllUsers();
-    const user = users.find((u) => u.username === credentials.username);
-    if (!user || credentials.password !== "success-password") {
-      credentials.password = "failed-password";
+    const user = users.find((u) => u.username === data.username);
+    if (!user || data.password !== "success-password") {
+      data.password = "failed-password";
     } else {
-      setUser(user);
+      updateUser(user);
     }
-    mutation.mutate(credentials);
+    mutation.mutate(data);
   };
+
   return (
     <>
       <AppBar position="static" color="primary" elevation={2}>
@@ -82,32 +97,44 @@ const LoginPage = () => {
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Login
           </Typography>
-          <TextField
-            label="Username"
-            value={credentials.username}
-            variant="outlined"
-            onChange={(e) =>
-              setCredentials({ ...credentials, username: e.target.value })
-            }
-          />
-          <TextField
-            label="Password"
-            value={credentials.password}
-            type="password"
-            variant="outlined"
-            onChange={(e) =>
-              setCredentials({ ...credentials, password: e.target.value })
-            }
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            sx={{ my: 1 }}
-            onClick={handleLogin}
-          >
-            Login
-          </Button>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+              label="Username"
+              variant="outlined"
+              {...register("username")}
+              error={!!errors.username}
+              helperText={errors.username?.message}
+              fullWidth
+            />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+              fullWidth
+              sx={{ mt: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ my: 2 }}
+              type="submit"
+              fullWidth
+            >
+              Login
+            </Button>
+          </form>
+          {message && (
+            <Typography
+              color={mutation.isError ? "error" : "success"}
+              variant="body2"
+            >
+              {message}
+            </Typography>
+          )}
         </Card>
       </Box>
     </>
