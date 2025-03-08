@@ -1,18 +1,18 @@
 import { create } from "zustand";
-import { IUser } from "../../types";
+import { IUserWithRole } from "../context/UsersDataContext";
 type AuthUserStore = {
   isLoggedIn: boolean;
   credentials?: {
     username: string;
     password: string;
   };
-  user?: Partial<IUser>;
+  user?: Partial<IUserWithRole>;
   updateLoginStatus: (status: boolean) => void;
   updateCredentials: (credentials: {
     username: string;
     password: string;
   }) => void;
-  updateUser: (user: Partial<IUser>) => void;
+  updateUser: (user: Partial<IUserWithRole>) => void;
 };
 
 export const useAuthUserStore = create<AuthUserStore>((set) => ({

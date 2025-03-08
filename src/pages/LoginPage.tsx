@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { roles } from "../../store/constants/roles";
+import { IUserWithRole } from "../../store/context/UsersDataContext";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -64,7 +66,10 @@ const LoginPage = () => {
     if (!user || data.password !== "success-password") {
       data.password = "failed-password";
     } else {
-      updateUser(user);
+      const userindex = users.findIndex((u) => u.username === data.username)!;
+      const userWithRole = user as IUserWithRole;
+      userWithRole["role"] = roles[userindex];
+      updateUser(userWithRole);
     }
     mutation.mutate(data);
   };

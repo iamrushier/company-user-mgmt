@@ -14,9 +14,16 @@ interface UserCardProps {
   name: string;
   company: string;
   email: string;
+  role: string;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ id, name, company, email }) => {
+const UserCard: React.FC<UserCardProps> = ({
+  id,
+  name,
+  company,
+  email,
+  role,
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -42,7 +49,7 @@ const UserCard: React.FC<UserCardProps> = ({ id, name, company, email }) => {
           {name}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          {company}
+          {company} | {role}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           {email}

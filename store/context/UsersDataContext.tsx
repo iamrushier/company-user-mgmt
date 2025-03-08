@@ -2,14 +2,21 @@ import { createContext, useContext, useReducer } from "react";
 import React from "react";
 import { IUser } from "../../types";
 
+export interface IUserWithRole extends IUser {
+  role: string;
+}
 type UserDataContextType = {
-  data: IUser[];
-  dispatch: React.Dispatch<{ type: string; payload?: IUser[]; id?: number }>;
+  data: IUserWithRole[];
+  dispatch: React.Dispatch<{
+    type: string;
+    payload?: IUserWithRole[];
+    id?: number;
+  }>;
 };
 
 const reducer = (
-  state: IUser[],
-  action: { type: string; payload?: IUser[]; id?: number }
+  state: IUserWithRole[],
+  action: { type: string; payload?: IUserWithRole[]; id?: number }
 ) => {
   switch (action.type) {
     case "SET_USERS":

@@ -129,16 +129,31 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
                     navigate(`/${props.title.toLowerCase()}`);
                   }}
                 >
-                  <ListItemText primary="Show all" />
+                  <ListItemText
+                    primary={
+                      props.title.toLowerCase() === "roles"
+                        ? "Edit roles"
+                        : "Show all"
+                    }
+                  />
                 </ListItemButton>
               </ListItem>
               <ListItem>
                 <ListItemButton
                   onClick={() => {
-                    navigate(`/${props.title.toLowerCase()}/add`);
+                    const endpoint = props.title.toLowerCase();
+                    navigate(
+                      `/${endpoint}/${endpoint === "roles" ? "assign" : "add"}`
+                    );
                   }}
                 >
-                  <ListItemText primary="Add new" />
+                  <ListItemText
+                    primary={
+                      props.title.toLowerCase() === "roles"
+                        ? "Assign roles"
+                        : "Add new"
+                    }
+                  />
                 </ListItemButton>
               </ListItem>
             </List>

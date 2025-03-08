@@ -113,7 +113,8 @@ const Header = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleClose}>
-          <Avatar /> {isLoggedIn ? user?.name : "My Account"}
+          <Avatar /> {isLoggedIn ? user?.name : "My Account"} |{" "}
+          {isLoggedIn ? user?.role : "Guest"}
         </MenuItem>
         <Divider />
         <MenuItem onClick={isLoggedIn ? handleLogout : handleLogin}>

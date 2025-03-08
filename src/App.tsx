@@ -20,6 +20,14 @@ import { BlogsDataProvider } from "../store/context/BlogsDataContext";
 import { CommentsDataProvider } from "../store/context/CommentsDataContext";
 import BlogDetails from "./components/BlogDetails";
 import BlogForm from "./components/BlogForm";
+import Unauthorized from "./components/Unauthorized";
+import ProtectedReadUsers from "../protected_routes/ProtectedReadUsers";
+import ProtectedWriteUsers from "../protected_routes/ProtectedWriteUsers";
+import ProtectedReadCompanies from "../protected_routes/ProtectedReadCompanies";
+import ProtectedWriteCompanies from "../protected_routes/ProtectedWriteCompanies";
+import ProtectedReadBlogs from "../protected_routes/ProtectedReadBlogs";
+import ProtectedWriteBlogs from "../protected_routes/ProtectedWriteBlogs";
+import ProtectedWriteRoles from "../protected_routes/ProtectedWriteRoles";
 function App() {
   return (
     <>
@@ -33,45 +41,62 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route
-                      path="/users"
-                      element={<SidebarLayout title="Users" />}
-                    >
-                      <Route index element={<Users />} />
-                      <Route path="add" element={<UserForm />} />
-                      <Route path="edit/:id" element={<UserForm />} />
-                      <Route path=":id" element={<UserDetails />} />
-                    </Route>
-                    <Route
-                      path="/companies"
-                      element={<SidebarLayout title="Companies" />}
-                    >
-                      <Route index element={<Companies />} />
-                      <Route path="add" element={<CompanyForm />} />
-                      <Route path="edit/:id" element={<CompanyForm />} />
-                      <Route path=":id" element={<CompanyDetails />} />
+
+                    <Route element={<ProtectedReadUsers />}>
+                      <Route
+                        path="/users"
+                        element={<SidebarLayout title="Users" />}
+                      >
+                        <Route index element={<Users />} />
+                        <Route element={<ProtectedWriteUsers />}>
+                          <Route path="add" element={<UserForm />} />
+                          <Route path="edit/:id" element={<UserForm />} />
+                        </Route>
+
+                        <Route path=":id" element={<UserDetails />} />
+                      </Route>
                     </Route>
 
-                    <Route
-                      path="/blogs"
-                      element={<SidebarLayout title="Blogs" />}
-                    >
-                      <Route index element={<Blogs />} />
-                      <Route path="add" element={<BlogForm />} />
-                      <Route path="edit/:id" element={<BlogForm />} />
-                      <Route path=":id" element={<BlogDetails />} />
+                    <Route element={<ProtectedReadCompanies />}>
+                      <Route
+                        path="/companies"
+                        element={<SidebarLayout title="Companies" />}
+                      >
+                        <Route index element={<Companies />} />
+                        <Route element={<ProtectedWriteCompanies />}>
+                          <Route path="add" element={<CompanyForm />} />
+                          <Route path="edit/:id" element={<CompanyForm />} />
+                        </Route>
+                        <Route path=":id" element={<CompanyDetails />} />
+                      </Route>
+                    </Route>
+                    <Route element={<ProtectedReadBlogs />}>
+                      <Route
+                        path="/blogs"
+                        element={<SidebarLayout title="Blogs" />}
+                      >
+                        <Route index element={<Blogs />} />
+                        <Route element={<ProtectedWriteBlogs />}>
+                          <Route path="add" element={<BlogForm />} />
+                          <Route path="edit/:id" element={<BlogForm />} />
+                        </Route>
+                        <Route path=":id" element={<BlogDetails />} />
+                      </Route>
                     </Route>
 
-                    <Route
-                      path="/roles"
-                      element={<SidebarLayout title="Roles" />}
-                    >
-                      <Route index element={<Roles />} />
-                      <Route path=":id" element={<RoleDetails />} />
+                    <Route element={<ProtectedWriteRoles />}>
+                      <Route
+                        path="/roles"
+                        element={<SidebarLayout title="Roles" />}
+                      >
+                        <Route index element={<Roles />} />
+                        <Route path=":id" element={<RoleDetails />} />
+                      </Route>
                     </Route>
 
-                    {/* <Route path="/blogs" element={<Blogs />} /> */}
                     <Route path="/profile" element={<LoginPage />} />
+
+                    <Route path="/not-authorized" element={<Unauthorized />} />
                     <Route path="*" element={<Error404 />} />
                   </Routes>
                 </BrowserRouter>

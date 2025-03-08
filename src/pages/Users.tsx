@@ -10,7 +10,7 @@ import UserCard from "../components/UserCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "../../api/api_calls";
 import { useState } from "react";
-
+import { roles } from "../../store/constants/roles";
 const Users = () => {
   const { data: userData, dispatch } = useUsersData();
   const [localUserData, setLocalUserData] = useState(userData);
@@ -21,9 +21,14 @@ const Users = () => {
 
     try {
       const users = await getAllUsers();
-      dispatch({ type: "SET_USERS", payload: users });
-      setLocalUserData(users);
-      return users;
+      const assignedUsers = users.map((user, index) => ({
+        ...user,
+        role: roles[index],
+      }));
+      dispatch({ type: "SET_USERS", payload: assignedUsers });
+      console.log("Is it updated?", userData[0]);
+      setLocalUserData(assignedUsers);
+      return assignedUsers;
     } catch (error) {
       console.error(error);
       return [];
@@ -79,6 +84,7 @@ const Users = () => {
               name={user.name}
               company={user.company}
               email={user.email}
+              role={user.role}
             />
           </Grid>
         ))}

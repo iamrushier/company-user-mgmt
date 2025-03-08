@@ -15,6 +15,7 @@ import { useCompaniesData } from "../../store/context/CompaniesDataContext";
 import { useRolesData } from "../../store/context/RolesDataContext";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
 import { useCommentsData } from "../../store/context/CommentsDataContext";
+import { roles } from "../../store/constants/roles";
 const initialStats = [
   {
     label: "Users",
@@ -37,6 +38,7 @@ const initialStats = [
     icon: <Article fontSize="large" color="warning" />,
   },
 ];
+
 const Dashboard = () => {
   const { data: userData, dispatch: dispatchUserData } = useUsersData();
   const { data: companyData, dispatch: dispatchCompanyData } =
@@ -54,8 +56,11 @@ const Dashboard = () => {
       const roleData = (await getAllRoles()) || [];
       const blogData = (await getAllBlogs()) || [];
       const commentData = (await getAllComments()) || [];
-
-      dispatchUserData({ type: "SET_USERS", payload: userData });
+      const assignedUsers = userData.map((user, index) => ({
+        ...user,
+        role: roles[index],
+      }));
+      dispatchUserData({ type: "SET_USERS", payload: assignedUsers });
       dispatchCompanyData({ type: "SET_COMPANIES", payload: companyData });
       dispatchRoleData({ type: "SET_ROLES", payload: roleData });
       dispatchBlogData({ type: "SET_BLOGS", payload: blogData });

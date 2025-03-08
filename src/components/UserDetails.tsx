@@ -40,6 +40,8 @@ import {
   ArrowBack,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,7 +49,8 @@ const UserDetails = () => {
   const navigate = useNavigate();
   const user = users.find((u) => u.id === Number(id));
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
+  const { user: loggedInUser } = useAuthUserStore();
+  const { roles } = useRoleStore();
   if (!user)
     return (
       <Box
@@ -70,9 +73,15 @@ const UserDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    dispatch({ type: "DELETE_USER", id: user.id });
-    setDeleteDialogOpen(false);
-    navigate("/users");
+    if (loggedInUser && roles[loggedInUser?.role!]["users"].read_write) {
+      dispatch({ type: "DELETE_USER", id: user.id });
+      setDeleteDialogOpen(false);
+      navigate("/users");
+    } else {
+      alert("You are not authorized to perform this action");
+      setDeleteDialogOpen(false);
+      return;
+    }
   };
 
   return (
