@@ -10,7 +10,9 @@ import {
   TextField,
   Typography,
   Paper,
-  Grid,
+  Grid2 as Grid,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
 
@@ -32,6 +34,18 @@ const BlogForm = () => {
   const { data: blogs, dispatch } = useBlogsData();
   const { user } = useAuthUserStore();
   const [isEditMode, setIsEditMode] = useState(!isEditing);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const {
     register,
@@ -52,8 +66,13 @@ const BlogForm = () => {
         );
         setIsEditMode(false);
       } else {
-        alert("Blog not found!");
-        navigate("/blogs");
+        setSnackbar({
+          open: true,
+          message: "Blog not found!",
+          severity: "error",
+        });
+
+        setTimeout(() => navigate("/blogs"), 2000);
       }
     } else {
       reset();
@@ -65,7 +84,12 @@ const BlogForm = () => {
     if (isEditing) {
       const existingBlog = blogs.find((b) => b.id === Number(id));
       if (!existingBlog) {
-        alert("Blog not found!");
+        setSnackbar({
+          open: true,
+          message: "Blog not found!",
+          severity: "error",
+        });
+
         return;
       }
       dispatch({
@@ -80,7 +104,11 @@ const BlogForm = () => {
           },
         ],
       });
-      alert("Blog updated successfully!");
+      setSnackbar({
+        open: true,
+        message: "Blog updated successfully!",
+        severity: "success",
+      });
     } else {
       const newBlog = {
         ...data,
@@ -90,9 +118,13 @@ const BlogForm = () => {
         comment_count: 0,
       };
       dispatch({ type: "ADD_BLOG", payload: [newBlog] });
-      alert("Blog added successfully!");
+      setSnackbar({
+        open: true,
+        message: "Blog added successfully!",
+        severity: "success",
+      });
     }
-    navigate("/blogs");
+    setTimeout(() => navigate("/blogs"), 2000);
   };
 
   return (
@@ -104,7 +136,7 @@ const BlogForm = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Title"
@@ -114,7 +146,7 @@ const BlogForm = () => {
                 disabled={!isEditMode}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 multiline
@@ -126,7 +158,7 @@ const BlogForm = () => {
                 disabled={!isEditMode}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Link"
@@ -164,6 +196,20 @@ const BlogForm = () => {
           </Box>
         </form>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

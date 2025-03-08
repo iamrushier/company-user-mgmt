@@ -18,6 +18,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
@@ -42,6 +44,19 @@ const BlogDetails = () => {
   const [newComment, setNewComment] = useState("");
   const [commentError, setCommentError] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   if (!blog)
     return (
@@ -78,9 +93,16 @@ const BlogDetails = () => {
     setNewComment("");
   };
   const handleDeleteBlog = () => {
-    blogDispatch({ type: "DELETE_BLOG", id: blog.id });
-    setDeleteDialogOpen(false);
-    navigate("/blogs");
+    setSnackbar({
+      open: true,
+      message: "Blog is being deleted",
+      severity: "error",
+    });
+    setTimeout(() => {
+      blogDispatch({ type: "DELETE_BLOG", id: blog.id });
+      setDeleteDialogOpen(false);
+      navigate("/blogs");
+    }, 2000);
   };
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", mt: 3, px: 2 }}>
@@ -187,6 +209,20 @@ const BlogDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

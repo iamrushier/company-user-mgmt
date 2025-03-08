@@ -16,6 +16,8 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useUsersData } from "../../store/context/UsersDataContext";
 import { useCompaniesData } from "../../store/context/CompaniesDataContext";
@@ -53,6 +55,18 @@ const UserForm = () => {
   const { data: companies } = useCompaniesData();
 
   const [isEditMode, setIsEditMode] = useState(!isEditing);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const {
     register,
@@ -77,8 +91,14 @@ const UserForm = () => {
         });
         setIsEditMode(false);
       } else {
-        alert("User not found!");
-        navigate("/users");
+        setSnackbar({
+          open: true,
+          message: "User not found!",
+          severity: "error",
+        });
+        setTimeout(() => {
+          navigate("/users");
+        }, 2000);
       }
     } else {
       reset();
@@ -88,14 +108,27 @@ const UserForm = () => {
 
   const onSubmit = (data: UserFormData) => {
     if (isEditing) {
-      dispatch({ type: "UPDATE_USER", payload: [{ ...data, id: Number(id) }] });
-      alert("User updated successfully!");
+      dispatch({
+        type: "UPDATE_USER",
+        payload: [{ ...data, id: Number(id), role: "User" }],
+      });
+      setSnackbar({
+        open: true,
+        message: "User updated successfully!",
+        severity: "success",
+      });
     } else {
-      const newUser = { ...data, id: Date.now() };
+      const newUser = { ...data, id: Date.now(), role: "User" };
       dispatch({ type: "ADD_USER", payload: [newUser] });
-      alert("User added successfully!");
+      setSnackbar({
+        open: true,
+        message: "User updated successfully!",
+        severity: "success",
+      });
     }
-    navigate("/users");
+    setTimeout(() => {
+      navigate("/users");
+    }, 2000);
   };
 
   return (
@@ -245,6 +278,20 @@ const UserForm = () => {
           </Box>
         </form>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

@@ -18,6 +18,8 @@ import {
   DialogContentText,
   DialogActions,
   Chip,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   Business,
@@ -38,6 +40,18 @@ const CompanyDetails = () => {
   const navigate = useNavigate();
   const company = companies.find((c) => c.id === Number(id));
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   if (!company)
     return (
@@ -56,9 +70,16 @@ const CompanyDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    dispatch({ type: "DELETE_COMPANY", id: company.id });
-    setDeleteDialogOpen(false);
-    navigate("/companies");
+    setSnackbar({
+      open: true,
+      message: "Comapny is being deleted!",
+      severity: "error",
+    });
+    setTimeout(() => {
+      dispatch({ type: "DELETE_COMPANY", id: company.id });
+      setDeleteDialogOpen(false);
+      navigate("/companies");
+    }, 2000);
   };
 
   return (
@@ -183,6 +204,20 @@ const CompanyDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

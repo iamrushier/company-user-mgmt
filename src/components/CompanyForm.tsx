@@ -11,6 +11,8 @@ import {
   Typography,
   Paper,
   Grid2 as Grid,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useCompaniesData } from "../../store/context/CompaniesDataContext";
 import { ICompany } from "../../types";
@@ -36,6 +38,18 @@ const CompanyForm = () => {
   const navigate = useNavigate();
   const { data: companies, dispatch } = useCompaniesData();
   const [isEditMode, setIsEditMode] = useState(!isEditing);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const {
     register,
@@ -56,8 +70,15 @@ const CompanyForm = () => {
         );
         setIsEditMode(false);
       } else {
-        alert("Company not found!");
-        navigate("/companies");
+        setSnackbar({
+          open: true,
+          message: "Company not found!",
+          severity: "error",
+        });
+
+        setTimeout(() => {
+          navigate("/companies");
+        }, 2000);
       }
     } else {
       reset();
@@ -71,13 +92,23 @@ const CompanyForm = () => {
         type: "UPDATE_COMPANY",
         payload: [{ ...data, id: Number(id) }],
       });
-      alert("Company updated successfully!");
+      setSnackbar({
+        open: true,
+        message: "Comapany updated successfully!",
+        severity: "success",
+      });
     } else {
       const newCompany = { ...data, id: Date.now() };
       dispatch({ type: "ADD_COMPANY", payload: [newCompany] });
-      alert("Company added successfully!");
+      setSnackbar({
+        open: true,
+        message: "Company added successfully!",
+        severity: "success",
+      });
     }
-    navigate("/companies");
+    setTimeout(() => {
+      navigate("/companies");
+    }, 2000);
   };
 
   return (
@@ -225,6 +256,20 @@ const CompanyForm = () => {
           </Box>
         </form>
       </Paper>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

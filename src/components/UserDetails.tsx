@@ -1,13 +1,3 @@
-/*
-  const { data: user, isLoading, isError } = useQuery({
-    queryKey: ["user", id],
-    queryFn: () => getUserById(Number(id)),
-    enabled: !!id, 
-  });
-
-  if (isLoading) return <CircularProgress sx={{ display: "block", mx: "auto", mt: 5 }} />;
-  if (isError || !user) return <Typography color="error">Failed to load user details.</Typography>;
-*/
 import { useParams, useNavigate } from "react-router-dom";
 import { useUsersData } from "../../store/context/UsersDataContext";
 import {
@@ -28,6 +18,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   Person,
@@ -51,6 +43,19 @@ const UserDetails = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { user: loggedInUser } = useAuthUserStore();
   const { roles } = useRoleStore();
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
   if (!user)
     return (
       <Box
@@ -74,13 +79,26 @@ const UserDetails = () => {
 
   const handleConfirmDelete = () => {
     if (loggedInUser && roles[loggedInUser?.role!]["users"].read_write) {
-      dispatch({ type: "DELETE_USER", id: user.id });
-      setDeleteDialogOpen(false);
-      navigate("/users");
+      setSnackbar({
+        open: true,
+        message: "User is being deleted!",
+        severity: "error",
+      });
+      setTimeout(() => {
+        dispatch({ type: "DELETE_USER", id: user.id });
+        setDeleteDialogOpen(false);
+        navigate("/users");
+      }, 2000);
     } else {
-      alert("You are not authorized to perform this action");
-      setDeleteDialogOpen(false);
-      return;
+      setSnackbar({
+        open: true,
+        message: "You are not authorized to perform this action!",
+        severity: "error",
+      });
+      setTimeout(() => {
+        setDeleteDialogOpen(false);
+        return;
+      }, 1000);
     }
   };
 
@@ -207,6 +225,20 @@ const UserDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
