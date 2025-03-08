@@ -11,9 +11,18 @@ import {
   Box,
   Divider,
   Paper,
+  Tooltip,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
 import { useCommentsData } from "../../store/context/CommentsDataContext";
 import { useState } from "react";
@@ -22,8 +31,8 @@ import CommentCard from "./CommentCard";
 
 const BlogDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: blogs } = useBlogsData();
-  const { data: comments, dispatch } = useCommentsData();
+  const { data: blogs, dispatch: blogDispatch } = useBlogsData();
+  const { data: comments, dispatch: commentDispatch } = useCommentsData();
   const { user } = useAuthUserStore();
   const navigate = useNavigate();
 
@@ -32,6 +41,7 @@ const BlogDetails = () => {
 
   const [newComment, setNewComment] = useState("");
   const [commentError, setCommentError] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   if (!blog)
     return (
@@ -64,10 +74,14 @@ const BlogDetails = () => {
       body: newComment,
     };
 
-    dispatch({ type: "SET_COMMENTS", payload: [comment, ...comments] });
+    commentDispatch({ type: "SET_COMMENTS", payload: [comment, ...comments] });
     setNewComment("");
   };
-
+  const handleDeleteBlog = () => {
+    blogDispatch({ type: "DELETE_BLOG", id: blog.id });
+    setDeleteDialogOpen(false);
+    navigate("/blogs");
+  };
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", mt: 3, px: 2 }}>
       <Button
@@ -82,6 +96,26 @@ const BlogDetails = () => {
         <CardHeader
           avatar={<Avatar sx={{ bgcolor: "primary.main" }}>B</Avatar>}
           title={<Typography variant="h5">{blog.title}</Typography>}
+          action={
+            <Box>
+              <Tooltip title="Edit Blog">
+                <IconButton
+                  color="primary"
+                  onClick={() => navigate(`/blogs/edit/${id}`)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Blog">
+                <IconButton
+                  color="error"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          }
         />
         <Divider />
         <CardContent>
@@ -133,6 +167,26 @@ const BlogDetails = () => {
           </Typography>
         )}
       </Paper>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Blog</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete "{blog.title}"? This action cannot
+            be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteBlog} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

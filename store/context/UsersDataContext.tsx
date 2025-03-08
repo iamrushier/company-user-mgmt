@@ -15,6 +15,17 @@ const reducer = (
     case "SET_USERS":
       if (action.payload) return action.payload;
       else return state;
+    case "ADD_USER":
+      if (action.payload && action.payload.length === 1)
+        return [...state, ...action.payload];
+      else return state;
+    case "UPDATE_USER":
+      if (action.payload && action.payload.length === 1) {
+        const updatedUser = action.payload[0];
+        return state.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user
+        );
+      } else return state;
     case "DELETE_USER":
       if (action.id) return state.filter((user) => user.id !== action.id);
   }

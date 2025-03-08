@@ -17,6 +17,21 @@ const reducer = (
     case "DELETE_BLOG":
       if (!action.id) return state;
       return state.filter((blog) => blog.id !== action.id);
+    case "UPDATE_BLOG":
+      if (action.payload && action.payload.length === 1) {
+        const updatedBlog = action.payload[0];
+        return state.map((blog) =>
+          blog.id === updatedBlog.id ? updatedBlog : blog
+        );
+      } else {
+        return state;
+      }
+    case "ADD_BLOG":
+      if (action.payload && action.payload.length === 1) {
+        return [...state, action.payload[0]];
+      } else {
+        return state;
+      }
     default:
       return state;
   }
