@@ -18,7 +18,10 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { roles } from "../../store/constants/roles";
-import { IUserWithRole } from "../../store/context/UsersDataContext";
+import {
+  IUserWithRole,
+  useUsersData,
+} from "../../store/context/UsersDataContext";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -32,6 +35,7 @@ const LoginPage = () => {
   const { updateLoginStatus, updateCredentials, updateUser } =
     useAuthUserStore();
   const [message, setMessage] = useState("");
+  const { data: userData } = useUsersData();
   const {
     register,
     handleSubmit,
@@ -61,17 +65,31 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     // Manual authorization
-    const users = await getAllUsers();
-    const user = users.find((u) => u.username === data.username);
-    if (!user || data.password !== "success-password") {
-      data.password = "failed-password";
+    if (userData.length === 0) {
+      const users = await getAllUsers();
+      const user = users.find((u) => u.username === data.username);
+      if (!user || data.password !== "success-password") {
+        data.password = "failed-password";
+      } else {
+        const userindex = users.findIndex((u) => u.username === data.username)!;
+        const userWithRole = user as IUserWithRole;
+        userWithRole["role"] = roles[userindex];
+        updateUser(userWithRole);
+      }
+      mutation.mutate(data);
     } else {
-      const userindex = users.findIndex((u) => u.username === data.username)!;
-      const userWithRole = user as IUserWithRole;
-      userWithRole["role"] = roles[userindex];
-      updateUser(userWithRole);
+      const user = userData.find((u) => u.username === data.username);
+      if (!user || data.password !== "success-password") {
+        setMessage("Invalid credentials. Please try again.");
+        return;
+      } else {
+        updateLoginStatus(true);
+        updateCredentials({ username: data.username, password: data.password });
+        updateUser(user);
+        setMessage("Login successful! Redirecting...");
+        setTimeout(() => navigate("/"), 1000);
+      }
     }
-    mutation.mutate(data);
   };
 
   return (

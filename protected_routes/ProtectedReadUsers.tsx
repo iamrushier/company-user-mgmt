@@ -4,7 +4,6 @@ import useRoleStore from "../store/zustand/RolesActionsStore";
 const ProtectedReadUsers = () => {
   const { user } = useAuthUserStore();
   const { roles } = useRoleStore();
-  console.log(typeof user);
   const userRole =
     user && typeof user === "object" && "role" in user ? user.role : null;
   return (
