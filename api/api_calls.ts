@@ -44,3 +44,8 @@ export const getAllComments = async (): Promise<IBlog[]> => {
   const response = await companyAPI.get("/comments");
   return response.data;
 };
+
+export const getUserById = async (id: number): Promise<IUser> => {
+  const response = await companyAPI.get(`/users/${id}`);
+  return response.data;
+};
