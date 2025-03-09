@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useCompaniesData } from "../../store/context/CompaniesDataContext";
-import CompanyCard from "../components/CompanyCard";
+import CompanyCard from "../components/company/CompanyCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCompanies } from "../../api/api_calls";
 import { ICompany } from "../../types";

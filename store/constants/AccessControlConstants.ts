@@ -1,4 +1,4 @@
-export const roles = [
+export const DEFAULT_USER_ROLES = [
   "Admin",
   "Manager",
   "Manager",
@@ -21,7 +21,7 @@ export const roles = [
   "User",
 ];
 
-export const defaultPermissions = {
+export const DEFAULT_PERMISSIONS = {
   users: { read: false, read_write: false },
   companies: { read: false, read_write: false },
   roles: { read: false, read_write: false },

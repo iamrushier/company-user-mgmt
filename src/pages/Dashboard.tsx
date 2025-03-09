@@ -14,7 +14,7 @@ import { useCompaniesData } from "../../store/context/CompaniesDataContext";
 import { useRolesData } from "../../store/context/RolesDataContext";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
 import { useCommentsData } from "../../store/context/CommentsDataContext";
-import { roles } from "../../store/constants/roles";
+import { DEFAULT_USER_ROLES } from "../../store/constants/AccessControlConstants";
 
 const Dashboard = () => {
   const { data: userData, dispatch: dispatchUserData } = useUsersData();
@@ -35,7 +35,7 @@ const Dashboard = () => {
       ]);
       const assignedUsers = users.map((user, index) => ({
         ...user,
-        role: roles[index],
+        role: DEFAULT_USER_ROLES[index],
       }));
       dispatchUserData({ type: "SET_USERS", payload: assignedUsers });
       dispatchCompanyData({ type: "SET_COMPANIES", payload: companies });

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useCompaniesData } from "../../store/context/CompaniesDataContext";
+import { useCompaniesData } from "../../../store/context/CompaniesDataContext";
 import {
   Card,
   CardContent,
@@ -33,8 +33,8 @@ import {
   AccountCircle,
 } from "@mui/icons-material";
 import { useState } from "react";
-import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
-import useRoleStore from "../../store/zustand/RolesActionsStore";
+import { useAuthUserStore } from "../../../store/zustand/AuthUserStore";
+import useRoleStore from "../../../store/zustand/RolesActionsStore";
 
 const CompanyDetails = () => {
   const { id } = useParams<{ id: string }>();

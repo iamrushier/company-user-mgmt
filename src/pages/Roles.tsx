@@ -23,8 +23,8 @@ import {
 } from "@mui/icons-material";
 import { JSX, useState } from "react";
 import useRoleStore from "../../store/zustand/RolesActionsStore";
-import { defaultPermissions } from "../../store/constants/roles";
-import RolePermissionTable from "../components/RolePermissionTable";
+import { DEFAULT_PERMISSIONS } from "../../store/constants/AccessControlConstants";
+import RolePermissionTable from "../components/role/RolePermissionTable";
 
 const roleIcons: { [key: string]: JSX.Element } = {
   Admin: <AdminPanelSettings fontSize="large" color="primary" />,
@@ -65,7 +65,7 @@ const Roles = () => {
       return;
     }
 
-    addRole(trimmedRole, defaultPermissions);
+    addRole(trimmedRole, DEFAULT_PERMISSIONS);
     setNewRoleName("");
   };
 

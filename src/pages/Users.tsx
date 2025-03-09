@@ -6,11 +6,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useUsersData } from "../../store/context/UsersDataContext";
-import UserCard from "../components/UserCard";
+import UserCard from "../components/user/UserCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "../../api/api_calls";
 import { useMemo, useState } from "react";
-import { roles } from "../../store/constants/roles";
+import { DEFAULT_USER_ROLES } from "../../store/constants/AccessControlConstants";
 const Users = () => {
   const { data: userData, dispatch } = useUsersData();
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,7 +22,7 @@ const Users = () => {
       const users = await getAllUsers();
       const assignedUsers = users.map((user, index) => ({
         ...user,
-        role: roles[index],
+        role: DEFAULT_USER_ROLES[index],
       }));
       dispatch({ type: "SET_USERS", payload: assignedUsers });
       return assignedUsers;

@@ -2,7 +2,7 @@ import { Container, List } from "@mui/material";
 import { useBlogsData } from "../../store/context/BlogsDataContext";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBlogs } from "../../api/api_calls";
-import BlogCard from "../components/BlogCard";
+import BlogCard from "../components/blog/BlogCard";
 const Blogs = () => {
   const { data: blogData, dispatch } = useBlogsData();
 

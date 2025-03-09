@@ -11,8 +11,8 @@ import {
   InputLabel,
   Avatar,
 } from "@mui/material";
-import { useUsersData } from "../../store/context/UsersDataContext";
-import { useRolesData } from "../../store/context/RolesDataContext";
+import { useUsersData } from "../../../store/context/UsersDataContext";
+import { useRolesData } from "../../../store/context/RolesDataContext";
 
 const RoleDetails = () => {
   const { data: users, dispatch: userDispatch } = useUsersData();

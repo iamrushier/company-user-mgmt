@@ -6,7 +6,7 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { IBlog } from "../../types";
+import { IBlog } from "../../../types";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 const BlogCard = ({ blog }: { blog: IBlog }) => {

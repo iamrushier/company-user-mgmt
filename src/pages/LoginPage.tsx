@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { roles } from "../../store/constants/roles";
+import { DEFAULT_USER_ROLES } from "../../store/constants/AccessControlConstants";
 import {
   IUserWithRole,
   useUsersData,
@@ -73,7 +73,7 @@ const LoginPage = () => {
       } else {
         const userindex = users.findIndex((u) => u.username === data.username)!;
         const userWithRole = user as IUserWithRole;
-        userWithRole["role"] = roles[userindex];
+        userWithRole["role"] = DEFAULT_USER_ROLES[userindex];
         updateUser(userWithRole);
       }
       mutation.mutate(data);

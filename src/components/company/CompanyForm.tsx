@@ -14,8 +14,8 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useCompaniesData } from "../../store/context/CompaniesDataContext";
-import { ICompany } from "../../types";
+import { useCompaniesData } from "../../../store/context/CompaniesDataContext";
+import { ICompany } from "../../../types";
 
 const companySchema = z.object({
   name: z.string().min(1, "Company name is required"),

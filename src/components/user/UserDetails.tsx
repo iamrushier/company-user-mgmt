@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useUsersData } from "../../store/context/UsersDataContext";
+import { useUsersData } from "../../../store/context/UsersDataContext";
 import {
   Card,
   CardContent,
@@ -32,8 +32,8 @@ import {
   ArrowBack,
 } from "@mui/icons-material";
 import { useState } from "react";
-import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
-import useRoleStore from "../../store/zustand/RolesActionsStore";
+import { useAuthUserStore } from "../../../store/zustand/AuthUserStore";
+import useRoleStore from "../../../store/zustand/RolesActionsStore";
 
 const UserDetails = () => {
   const { id } = useParams<{ id: string }>();

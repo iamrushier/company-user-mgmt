@@ -25,12 +25,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useBlogsData } from "../../store/context/BlogsDataContext";
-import { useCommentsData } from "../../store/context/CommentsDataContext";
+import { useBlogsData } from "../../../store/context/BlogsDataContext";
+import { useCommentsData } from "../../../store/context/CommentsDataContext";
 import { useState } from "react";
-import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import { useAuthUserStore } from "../../../store/zustand/AuthUserStore";
 import CommentCard from "./CommentCard";
-import useRoleStore from "../../store/zustand/RolesActionsStore";
+import useRoleStore from "../../../store/zustand/RolesActionsStore";
 
 const BlogDetails = () => {
   const { id } = useParams<{ id: string }>();

@@ -19,8 +19,8 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useUsersData } from "../../store/context/UsersDataContext";
-import { useCompaniesData } from "../../store/context/CompaniesDataContext";
+import { useUsersData } from "../../../store/context/UsersDataContext";
+import { useCompaniesData } from "../../../store/context/CompaniesDataContext";
 
 const userSchema = z.object({
   name: z.string().min(1, "Name is required"),

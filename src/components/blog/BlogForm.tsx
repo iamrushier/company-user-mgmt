@@ -14,10 +14,10 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useBlogsData } from "../../store/context/BlogsDataContext";
+import { useBlogsData } from "../../../store/context/BlogsDataContext";
 
-import { IBlog } from "../../types";
-import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import { IBlog } from "../../../types";
+import { useAuthUserStore } from "../../../store/zustand/AuthUserStore";
 
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),

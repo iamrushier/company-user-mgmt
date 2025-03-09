@@ -8,8 +8,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { defaultPermissions } from "../../store/constants/roles";
-import { Roles } from "../../store/zustand/RolesActionsStore";
+import { DEFAULT_PERMISSIONS } from "../../../store/constants/AccessControlConstants";
+import { Roles } from "../../../store/zustand/RolesActionsStore";
 const permissionsList = ["users", "companies", "roles", "blogs"] as const;
 
 const RolePermissionTable = ({
@@ -21,7 +21,7 @@ const RolePermissionTable = ({
   roleName: string;
   handlePermissionChange: (
     roleName: string,
-    category: keyof typeof defaultPermissions,
+    category: keyof typeof DEFAULT_PERMISSIONS,
     permissionType: "read" | "read_write"
   ) => void;
 }) => {

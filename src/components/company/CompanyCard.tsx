@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { ICompany } from "../../types";
+import { ICompany } from "../../../types";
 import { Business } from "@mui/icons-material";
 
 const CompanyCard = ({ company }: { company: ICompany }) => {
