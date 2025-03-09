@@ -11,7 +11,6 @@ import Title from "../components/Title";
 import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
 import { useMutation } from "@tanstack/react-query";
 import { getAllUsers, tryLoginForUser } from "../../api/api_calls";
-import { ICredentials } from "../../types";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,6 +35,8 @@ const LoginPage = () => {
     useAuthUserStore();
   const [message, setMessage] = useState("");
   const { data: userData } = useUsersData();
+  const [isPending, setIsPending] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -43,18 +44,16 @@ const LoginPage = () => {
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
   const mutation = useMutation({
-    mutationFn: async (credentials: ICredentials) => {
-      const response = await tryLoginForUser(credentials);
-      return response;
-    },
+    mutationFn: tryLoginForUser,
     onSuccess: (data, variables) => {
+      setIsPending(true);
       updateLoginStatus(data.success);
       updateCredentials(variables);
       setMessage("Login successful! Redirecting...");
       setTimeout(() => navigate("/"), 1000);
-      /* navigate("/");*/
     },
     onError: (error: any) => {
+      setIsPending(false);
       if (error?.status === 401) {
         setMessage("Invalid credentials. Please try again.");
       } else {
@@ -65,6 +64,7 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     // Manual authorization
+    setIsPending(true);
     if (userData.length === 0) {
       const users = await getAllUsers();
       const user = users.find((u) => u.username === data.username);
@@ -81,8 +81,10 @@ const LoginPage = () => {
       const user = userData.find((u) => u.username === data.username);
       if (!user || data.password !== "success-password") {
         setMessage("Invalid credentials. Please try again.");
+        setIsPending(false);
         return;
       } else {
+        setIsPending(true);
         updateLoginStatus(true);
         updateCredentials({ username: data.username, password: data.password });
         updateUser(user);
@@ -146,6 +148,7 @@ const LoginPage = () => {
               sx={{ my: 2 }}
               type="submit"
               fullWidth
+              {...{ disabled: isPending }}
             >
               Login
             </Button>

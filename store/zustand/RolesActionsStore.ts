@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
-interface Permissions {
+export interface Permissions {
   read: boolean;
   read_write: boolean;
 }
 
-interface Roles {
+export interface Roles {
   [roleName: string]: {
     users: Permissions;
     companies: Permissions;

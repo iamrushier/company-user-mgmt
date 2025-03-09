@@ -8,14 +8,6 @@ import {
   Typography,
   List,
   ListItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Checkbox,
-  Paper,
   TextField,
   Button,
   Stack,
@@ -31,6 +23,8 @@ import {
 } from "@mui/icons-material";
 import { JSX, useState } from "react";
 import useRoleStore from "../../store/zustand/RolesActionsStore";
+import { defaultPermissions } from "../../store/constants/roles";
+import RolePermissionTable from "../components/RolePermissionTable";
 
 const roleIcons: { [key: string]: JSX.Element } = {
   Admin: <AdminPanelSettings fontSize="large" color="primary" />,
@@ -61,14 +55,17 @@ const Roles = () => {
   };
 
   const handleAddRole = () => {
-    if (!newRoleName.trim() || roles[newRoleName]) return;
-    const defaultPermissions = {
-      users: { read: false, read_write: false },
-      companies: { read: false, read_write: false },
-      roles: { read: false, read_write: false },
-      blogs: { read: false, read_write: false },
-    };
-    addRole(newRoleName, defaultPermissions);
+    const trimmedRole = newRoleName.trim();
+    const normalizedRole = trimmedRole.toLowerCase();
+
+    if (
+      !trimmedRole ||
+      Object.keys(roles).some((r) => r.toLowerCase() === normalizedRole)
+    ) {
+      return;
+    }
+
+    addRole(trimmedRole, defaultPermissions);
     setNewRoleName("");
   };
 
@@ -116,71 +113,11 @@ const Roles = () => {
                 </AccordionSummary>
 
                 <AccordionDetails>
-                  <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="left">
-                            <strong>Permissions</strong>
-                          </TableCell>
-                          {permissionsList.map((perm) => (
-                            <TableCell key={perm} align="center">
-                              {perm.charAt(0).toUpperCase() + perm.slice(1)}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableHead>
-
-                      <TableBody>
-                        <TableRow>
-                          <TableCell>
-                            <strong>Read</strong>
-                          </TableCell>
-                          {permissionsList.map((category) => (
-                            <TableCell key={category} align="center">
-                              <Checkbox
-                                checked={roles[roleName][category].read}
-                                {...(category === "roles" ||
-                                roleName === "Admin"
-                                  ? { disabled: true }
-                                  : {})}
-                                onChange={() =>
-                                  handlePermissionChange(
-                                    roleName,
-                                    category,
-                                    "read"
-                                  )
-                                }
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-
-                        <TableRow>
-                          <TableCell>
-                            <strong>Read & Write</strong>
-                          </TableCell>
-                          {permissionsList.map((category) => (
-                            <TableCell key={category} align="center">
-                              <Checkbox
-                                checked={roles[roleName][category].read_write}
-                                {...(roleName === "Admin"
-                                  ? { disabled: true }
-                                  : {})}
-                                onChange={() =>
-                                  handlePermissionChange(
-                                    roleName,
-                                    category,
-                                    "read_write"
-                                  )
-                                }
-                              />
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <RolePermissionTable
+                    roles={roles}
+                    roleName={roleName}
+                    handlePermissionChange={handlePermissionChange}
+                  />
                 </AccordionDetails>
               </Accordion>
             </Card>

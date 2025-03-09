@@ -9,11 +9,10 @@ import { useUsersData } from "../../store/context/UsersDataContext";
 import UserCard from "../components/UserCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "../../api/api_calls";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { roles } from "../../store/constants/roles";
 const Users = () => {
   const { data: userData, dispatch } = useUsersData();
-  const [localUserData, setLocalUserData] = useState(userData);
   const [searchQuery, setSearchQuery] = useState("");
 
   const fetchUserData = async () => {
@@ -26,8 +25,6 @@ const Users = () => {
         role: roles[index],
       }));
       dispatch({ type: "SET_USERS", payload: assignedUsers });
-      console.log("Is it updated?", userData[0]);
-      setLocalUserData(assignedUsers);
       return assignedUsers;
     } catch (error) {
       console.error(error);
@@ -40,20 +37,18 @@ const Users = () => {
     refetchOnMount: false,
     staleTime: 1000 * 60 * 5,
   });
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      setLocalUserData(userData);
-      return;
-    }
-    const filteredUsers = userData.filter((user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setLocalUserData(filteredUsers);
-  };
+  const filteredUsers = useMemo(() => {
+    return !searchQuery.trim()
+      ? userData || []
+      : (userData || []).filter((user) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+  }, [searchQuery, userData]);
+
   const handleClearSearch = () => {
     setSearchQuery("");
-    setLocalUserData(userData);
   };
+
   return (
     <Container>
       <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
@@ -64,9 +59,7 @@ const Users = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button variant="contained" color="primary" onClick={handleSearch}>
-          Search
-        </Button>
+
         <Button
           variant="outlined"
           color="secondary"
@@ -77,7 +70,7 @@ const Users = () => {
         </Button>
       </Box>
       <Grid container spacing={3}>
-        {localUserData.map((user) => (
+        {filteredUsers.map((user) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }} key={user.id}>
             <UserCard
               id={user.id}

@@ -75,10 +75,10 @@ const Companies = () => {
   const fetchCompanyData = async () => {
     if (companyData.length > 0) return companyData;
     try {
-      const companyData = await getAllCompanies();
-      dispatch({ type: "SET_COMPANIES", payload: companyData });
-      dispatchLocalData({ type: "SET_COMPANIES", payload: companyData });
-      return companyData;
+      const fetchedCompanies = await getAllCompanies();
+      dispatch({ type: "SET_COMPANIES", payload: fetchedCompanies });
+      dispatchLocalData({ type: "SET_COMPANIES", payload: fetchedCompanies });
+      return fetchedCompanies;
     } catch (error) {
       console.error(error);
       return [];

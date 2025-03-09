@@ -20,3 +20,10 @@ export const roles = [
   "User",
   "User",
 ];
+
+export const defaultPermissions = {
+  users: { read: false, read_write: false },
+  companies: { read: false, read_write: false },
+  roles: { read: false, read_write: false },
+  blogs: { read: false, read_write: false },
+};
