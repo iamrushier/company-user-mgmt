@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthUserStore } from "../store/zustand/AuthUserStore";
-import useRoleStore from "../store/zustand/RolesActionsStore";
+import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 const ProtectedReadBlogs = () => {
   const { user } = useAuthUserStore();
   const { roles } = useRoleStore();
