@@ -36,6 +36,7 @@ const LoginPage = () => {
   const [message, setMessage] = useState("");
   const { data: userData } = useUsersData();
   const [isPending, setIsPending] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const {
     register,
@@ -47,6 +48,7 @@ const LoginPage = () => {
     mutationFn: tryLoginForUser,
     onSuccess: (data, variables) => {
       setIsPending(true);
+      setIsError(false);
       updateLoginStatus(data.success);
       updateCredentials(variables);
       setMessage("Login successful! Redirecting...");
@@ -54,6 +56,7 @@ const LoginPage = () => {
     },
     onError: (error: any) => {
       setIsPending(false);
+      setIsError(true);
       if (error?.status === 401) {
         setMessage("Invalid credentials. Please try again.");
       } else {
@@ -81,6 +84,7 @@ const LoginPage = () => {
       const user = userData.find((u) => u.username === data.username);
       if (!user || data.password !== "success-password") {
         setMessage("Invalid credentials. Please try again.");
+        setIsError(true);
         setIsPending(false);
         return;
       } else {
@@ -88,6 +92,7 @@ const LoginPage = () => {
         updateLoginStatus(true);
         updateCredentials({ username: data.username, password: data.password });
         updateUser(user);
+        setIsError(false);
         setMessage("Login successful! Redirecting...");
         setTimeout(() => navigate("/"), 1000);
       }
@@ -154,10 +159,7 @@ const LoginPage = () => {
             </Button>
           </form>
           {message && (
-            <Typography
-              color={mutation.isError ? "error" : "success"}
-              variant="body2"
-            >
+            <Typography color={isError ? "error" : "success"} variant="body2">
               {message}
             </Typography>
           )}
