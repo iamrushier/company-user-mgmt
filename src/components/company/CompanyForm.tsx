@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
 import {
   Box,
   Button,
@@ -16,21 +15,7 @@ import {
 } from "@mui/material";
 import { useCompaniesData } from "../../../store/context/CompaniesDataContext";
 import { ICompany } from "../../../types";
-
-const companySchema = z.object({
-  name: z.string().min(1, "Company name is required"),
-  address: z.string().min(1, "Address is required"),
-  zip: z.string().min(4, "Zip code must be valid").max(10, "Zip code too long"),
-  country: z.string().min(2, "Country must be valid"),
-  employeeCount: z.number().min(1, "Must have at least 1 employee"),
-  industry: z.string().min(2, "Industry is required"),
-  marketCap: z.number().min(0, "Market cap must be positive"),
-  domain: z.string().min(1, "Domain is required"),
-  logo: z.string().url("Invalid logo URL"),
-  ceoName: z.string().min(1, "CEO name is required"),
-});
-
-type CompanyFormData = z.infer<typeof companySchema>;
+import { CompanyFormData, companySchema } from "../../../store/schemas";
 
 const CompanyForm = () => {
   const { id } = useParams();

@@ -13,7 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getAllUsers, tryLoginForUser } from "../../api/api_calls";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { DEFAULT_USER_ROLES } from "../../store/constants/AccessControlConstants";
@@ -21,13 +21,7 @@ import {
   IUserWithRole,
   useUsersData,
 } from "../../store/context/UsersDataContext";
-
-const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { LoginFormData, loginSchema } from "../../store/schemas";
 
 const LoginPage = () => {
   const navigate = useNavigate();

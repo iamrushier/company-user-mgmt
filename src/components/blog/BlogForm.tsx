@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
 import {
   Box,
   Button,
@@ -18,14 +17,7 @@ import { useBlogsData } from "../../../store/context/BlogsDataContext";
 
 import { IBlog } from "../../../types";
 import { useAuthUserStore } from "../../../store/zustand/AuthUserStore";
-
-const blogSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  body: z.string().min(1, "Body is required"),
-  link: z.string().optional(),
-});
-
-type BlogFormData = z.infer<typeof blogSchema>;
+import { BlogFormData, blogSchema } from "../../../store/schemas";
 
 const BlogForm = () => {
   const { id } = useParams();

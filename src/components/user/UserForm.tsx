@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
 import {
   Box,
   Button,
@@ -21,31 +20,7 @@ import {
 } from "@mui/material";
 import { useUsersData } from "../../../store/context/UsersDataContext";
 import { useCompaniesData } from "../../../store/context/CompaniesDataContext";
-
-const userSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Username must contain only letters, numbers, or underscores"
-    ),
-  email: z.string().email("Invalid email address"),
-  phone: z
-    .string()
-    .regex(/^[+\d-]+$/, "Phone number can only contain digits, '+', and '-'")
-    .min(10, "Phone number must be at least 10 characters long")
-    .max(15, "Phone number cannot exceed 15 characters"),
-
-  company: z.string().min(1, "Company is required"),
-  address: z.string().min(1, "Address is required"),
-  zip: z.string().regex(/^\d{4,10}$/, "Zip code must be between 4-10 digits"),
-  state: z.string().min(2, "State must be valid"),
-  country: z.string().min(2, "Country must be valid"),
-});
-
-type UserFormData = z.infer<typeof userSchema>;
+import { UserFormData, userSchema } from "../../../store/schemas";
 
 const UserForm = () => {
   const { id } = useParams();
