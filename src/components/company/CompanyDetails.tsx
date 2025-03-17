@@ -56,6 +56,10 @@ const CompanyDetails = () => {
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
+  const userRole =
+    loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
+      ? loggedInUser.role
+      : null;
 
   if (!company)
     return (
@@ -74,15 +78,10 @@ const CompanyDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    const userRole =
-      loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
-        ? loggedInUser.role
-        : null;
-
     if (userRole && roles[userRole]?.companies?.read_write) {
       setSnackbar({
         open: true,
-        message: "Comapny is being deleted!",
+        message: "Company is being deleted!",
         severity: "error",
       });
       setTimeout(() => {
@@ -140,24 +139,27 @@ const CompanyDetails = () => {
             />
           }
           action={
-            <Box sx={{ display: "flex", gap: 1, mt: 1, mr: 1 }}>
-              <Tooltip title="Edit Company">
-                <IconButton
-                  color="primary"
-                  onClick={() => navigate(`/companies/edit/${id}`)}
-                >
-                  <Edit />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete Company">
-                <IconButton
-                  color="error"
-                  onClick={() => setDeleteDialogOpen(true)}
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            userRole &&
+            roles[userRole]?.companies?.read_write && (
+              <Box sx={{ display: "flex", gap: 1, mt: 1, mr: 1 }}>
+                <Tooltip title="Edit Company">
+                  <IconButton
+                    color="primary"
+                    onClick={() => navigate(`/companies/edit/${id}`)}
+                  >
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete Company">
+                  <IconButton
+                    color="error"
+                    onClick={() => setDeleteDialogOpen(true)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )
           }
           sx={{ pb: 0 }}
         />

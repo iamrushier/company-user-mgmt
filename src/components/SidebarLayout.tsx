@@ -16,6 +16,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { Outlet, useNavigate } from "react-router-dom";
 import Header from "./Header";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
+import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
 
 const drawerWidth = 240;
 
@@ -46,6 +48,8 @@ interface ISidebarLayoutPropsType {
   handleShowAll?: () => void;
   handleAddNew?: () => void;
 }
+
+type RoleKeyType = "users" | "companies" | "roles" | "blogs";
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -79,6 +83,12 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
     setOpen(false);
   };
   const navigate = useNavigate();
+  const { user: loggedInUser } = useAuthUserStore();
+  const { roles } = useRoleStore();
+  const userRole =
+    loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
+      ? loggedInUser.role
+      : null;
   return (
     <>
       <Header />
@@ -108,7 +118,7 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
               "& .MuiDrawer-paper": {
                 width: open ? `${drawerWidth}px` : 0,
                 boxSizing: "border-box",
-                top: "64px", // Prevents overlapping the app header
+                top: "64px",
                 height: "calc(100vh - 64px)",
               },
             }}
@@ -138,24 +148,30 @@ export default function SidebarLayout(props: ISidebarLayoutPropsType) {
                   />
                 </ListItemButton>
               </ListItem>
-              <ListItem>
-                <ListItemButton
-                  onClick={() => {
-                    const endpoint = props.title.toLowerCase();
-                    navigate(
-                      `/${endpoint}/${endpoint === "roles" ? "assign" : "add"}`
-                    );
-                  }}
-                >
-                  <ListItemText
-                    primary={
-                      props.title.toLowerCase() === "roles"
-                        ? "Assign roles"
-                        : "Add new"
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
+              {userRole &&
+                roles[userRole][props.title.toLowerCase() as RoleKeyType]
+                  .read_write && (
+                  <ListItem>
+                    <ListItemButton
+                      onClick={() => {
+                        const endpoint = props.title.toLowerCase();
+                        navigate(
+                          `/${endpoint}/${
+                            endpoint === "roles" ? "assign" : "add"
+                          }`
+                        );
+                      }}
+                    >
+                      <ListItemText
+                        primary={
+                          props.title.toLowerCase() === "roles"
+                            ? "Assign roles"
+                            : "Add new"
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                )}
             </List>
           </Drawer>
           <Main open={open} sx={{ mt: 3, height: "80vh", overflowY: "auto" }}>

@@ -60,6 +60,9 @@ const BlogDetails = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const userRole =
+    user && typeof user === "object" && "role" in user ? user.role : null;
+
   if (!blog)
     return (
       <Box sx={{ textAlign: "center", mt: 3 }}>
@@ -95,9 +98,6 @@ const BlogDetails = () => {
     setNewComment("");
   };
   const handleDeleteBlog = () => {
-    const userRole =
-      user && typeof user === "object" && "role" in user ? user.role : null;
-
     if (userRole && roles[userRole]?.blogs?.read_write) {
       setSnackbar({
         open: true,
@@ -136,24 +136,27 @@ const BlogDetails = () => {
           avatar={<Avatar sx={{ bgcolor: "primary.main" }}>B</Avatar>}
           title={<Typography variant="h5">{blog.title}</Typography>}
           action={
-            <Box>
-              <Tooltip title="Edit Blog">
-                <IconButton
-                  color="primary"
-                  onClick={() => navigate(`/blogs/edit/${id}`)}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete Blog">
-                <IconButton
-                  color="error"
-                  onClick={() => setDeleteDialogOpen(true)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            userRole &&
+            roles[userRole]?.blogs?.read_write && (
+              <Box>
+                <Tooltip title="Edit Blog">
+                  <IconButton
+                    color="primary"
+                    onClick={() => navigate(`/blogs/edit/${id}`)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete Blog">
+                  <IconButton
+                    color="error"
+                    onClick={() => setDeleteDialogOpen(true)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )
           }
         />
         <Divider />

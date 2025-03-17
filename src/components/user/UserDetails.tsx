@@ -56,6 +56,11 @@ const UserDetails = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const userRole =
+    loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
+      ? loggedInUser.role
+      : null;
+
   if (!user)
     return (
       <Box
@@ -78,11 +83,6 @@ const UserDetails = () => {
     );
 
   const handleConfirmDelete = () => {
-    const userRole =
-      loggedInUser && typeof loggedInUser === "object" && "role" in loggedInUser
-        ? loggedInUser.role
-        : null;
-
     if (userRole && roles[userRole]?.users?.read_write) {
       setSnackbar({
         open: true,
@@ -144,24 +144,27 @@ const UserDetails = () => {
             />
           }
           action={
-            <Box sx={{ display: "flex", gap: 1, mt: 1, mr: 1 }}>
-              <Tooltip title="Edit User">
-                <IconButton
-                  color="primary"
-                  onClick={() => navigate(`/users/edit/${id}`)}
-                >
-                  <Edit />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete User">
-                <IconButton
-                  color="error"
-                  onClick={() => setDeleteDialogOpen(true)}
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            userRole &&
+            roles[userRole]?.users?.read_write && (
+              <Box sx={{ display: "flex", gap: 1, mt: 1, mr: 1 }}>
+                <Tooltip title="Edit User">
+                  <IconButton
+                    color="primary"
+                    onClick={() => navigate(`/users/edit/${id}`)}
+                  >
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete User">
+                  <IconButton
+                    color="error"
+                    onClick={() => setDeleteDialogOpen(true)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )
           }
           sx={{ pb: 0 }}
         />

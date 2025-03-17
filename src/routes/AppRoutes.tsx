@@ -6,6 +6,7 @@ import Error404 from "../components/Error404";
 import UserRoutes from "./UserRoutes";
 import CompanyRoutes from "./CompanyRoutes";
 import BlogRoutes from "./BlogRoutes";
+import RoleRoutes from "./RoleRoutes";
 
 const AppRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const AppRoutes = () => {
       {UserRoutes()}
       {CompanyRoutes()}
       {BlogRoutes()}
+      {RoleRoutes()}
       <Route path="/not-authorized" element={<Unauthorized />} />
       <Route path="*" element={<Error404 />} />
     </Routes>

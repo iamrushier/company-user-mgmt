@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Title from "./Title";
 import { Login, Logout } from "@mui/icons-material";
 import { useAuthUserStore } from "../../store/zustand/AuthUserStore";
+import useRoleStore from "../../store/zustand/RolesActionsStore";
 
 const Header = () => {
   const { isLoggedIn, user, updateLoginStatus, updateCredentials, updateUser } =
@@ -46,6 +47,9 @@ const Header = () => {
     }, 500);
   };
 
+  const { roles } = useRoleStore();
+  const userRole =
+    user && typeof user === "object" && "role" in user ? user.role : null;
   return (
     <>
       <AppBar position="static" color="primary" elevation={2}>
@@ -59,10 +63,18 @@ const Header = () => {
               textColor="inherit"
             >
               <Tab label="Dashboard" value="/" />
-              <Tab label="Users" value="/users" />
-              <Tab label="Companies" value="/companies" />
-              <Tab label="Roles" value="/roles" />
-              <Tab label="Blogs" value="/blogs" />
+              {userRole && roles[userRole]?.users?.read && (
+                <Tab label="Users" value="/users" />
+              )}
+              {userRole && roles[userRole]?.companies?.read && (
+                <Tab label="Companies" value="/companies" />
+              )}
+              {userRole && roles[userRole]?.roles?.read_write && (
+                <Tab label="Roles" value="/roles" />
+              )}
+              {userRole && roles[userRole]?.blogs?.read && (
+                <Tab label="Blogs" value="/blogs" />
+              )}
             </Tabs>
           </Box>
           <IconButton
